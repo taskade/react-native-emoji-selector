@@ -1,16 +1,20 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import emoji from "emoji-datasource";
+import PropTypes from 'prop-types';
 import React, { Component } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  Platform,
   ActivityIndicator,
-  AsyncStorage,
-  FlatList
+  DynamicColorIOS,
+  FlatList,
+  Platform,
+  PlatformColor,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  useColorScheme,
+  View
 } from "react-native";
-import emoji from "emoji-datasource";
 
 export const Categories = {
   all: {
@@ -70,6 +74,7 @@ const categoryKeys = Object.keys(Categories);
 
 const TabBar = ({ theme, activeCategory, onPress, width }) => {
   const tabSize = width / categoryKeys.length;
+  const isDarkMode = useColorScheme() === 'dark'
 
   return categoryKeys.map(c => {
     const category = Categories[c];
@@ -81,7 +86,9 @@ const TabBar = ({ theme, activeCategory, onPress, width }) => {
           style={{
             flex: 1,
             height: tabSize,
-            borderColor: category === activeCategory ? theme : "#EEEEEE",
+            borderColor: category === activeCategory 
+              ? theme 
+              : isDarkMode ? "#8E8E93" : '#E5E5EA',
             borderBottomWidth: 2,
             alignItems: "center",
             justifyContent: "center"
@@ -100,6 +107,42 @@ const TabBar = ({ theme, activeCategory, onPress, width }) => {
       );
   });
 };
+
+const SearchBar = (props) => {
+  const { placeholder, theme, searchQuery, handleSearch } = props;
+  const isDarkMode = useColorScheme() === 'dark';
+
+  return (
+    <View style={styles.searchbar_container}>
+      <TextInput
+        style={[
+          styles.search,
+          {
+            backgroundColor: Platform.OS === 'ios' ? DynamicColorIOS({
+              light: PlatformColor('systemGray6'),
+              dark: PlatformColor('systemGray3')
+            }) : 'transparent',
+            color: Platform.OS === 'ios'
+              ? PlatformColor('label')
+              : isDarkMode ? '#FFFFFF87' : '#00000087',
+            }
+          ]}
+          placeholder={placeholder}
+          clearButtonMode="always"
+          returnKeyType="done"
+          autoCorrect={false}
+          underlineColorAndroid={theme}
+          value={searchQuery}
+          onChangeText={handleSearch}
+          placeholderTextColor={
+            Platform.OS === 'ios'
+              ? PlatformColor('placeholderText')
+              : isDarkMode ? '#FFFFFF56' : '#00000056'
+          }
+        />
+      </View>
+  )
+}
 
 const EmojiCell = ({ emoji, colSize, ...other }) => (
   <TouchableOpacity
@@ -234,7 +277,9 @@ export default class EmojiSelector extends Component {
         return list.map(emoji => ({ key: emoji.unified, emoji }));
       }
     })()
-    return this.props.shouldInclude ? emojiData.filter(e => this.props.shouldInclude(e.emoji)) : emojiData
+    return this.props.shouldInclude 
+      ? emojiData.filter(e => this.props.shouldInclude(e.emoji)) 
+      : emojiData;
   }
 
   prerenderEmojis(callback) {
@@ -286,22 +331,6 @@ export default class EmojiSelector extends Component {
     } = this.props;
 
     const { category, colSize, isReady, searchQuery } = this.state;
-
-    const Searchbar = (
-      <View style={styles.searchbar_container}>
-        <TextInput
-          style={styles.search}
-          placeholder={placeholder}
-          clearButtonMode="always"
-          returnKeyType="done"
-          autoCorrect={false}
-          underlineColorAndroid={theme}
-          value={searchQuery}
-          onChangeText={this.handleSearch}
-        />
-      </View>
-    );
-
     const title = searchQuery !== "" ? "Search Results" : category.name;
 
     return (
@@ -317,7 +346,14 @@ export default class EmojiSelector extends Component {
           )}
         </View>
         <View style={{ flex: 1 }}>
-          {showSearchBar && Searchbar}
+          {showSearchBar && (
+          <SearchBar
+              placeholder={placeholder}
+              theme={theme}
+              searchQuery={searchQuery}
+              handleSearch={this.handleSearch}
+            />
+          )}
           {isReady ? (
             <View style={{ flex: 1 }}>
               <View style={styles.container}>
@@ -352,7 +388,9 @@ export default class EmojiSelector extends Component {
 }
 
 EmojiSelector.defaultProps = {
-  theme: "#007AFF",
+  theme: Platform.OS === 'ios'
+    ? PlatformColor('systemBlue', '#007AFF')
+    : '#007AFF',
   category: Categories.all,
   showTabs: true,
   showSearchBar: true,
@@ -360,6 +398,35 @@ EmojiSelector.defaultProps = {
   showSectionTitles: true,
   columns: 6,
   placeholder: "Search..."
+};
+
+EmojiSelector.propTypes = {
+  category: PropTypes.object,
+  columns: PropTypes.number,
+  placeholder: PropTypes.string,
+  showTabs: PropTypes.bool,
+  showSearchBar: PropTypes.bool,
+  showHistory: PropTypes.bool,
+  showSectionTitles: PropTypes.bool,
+  theme: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
+};
+
+EmojiCell.propTypes = {
+  colSize: PropTypes.number,
+  emoji: PropTypes.object,  
+};
+
+SearchBar.propTypes = {
+  placeholder: PropTypes.string,
+  handleSearch: PropTypes.func,
+  searchQuery: PropTypes.string,
+  theme: PropTypes.oneOfType([
+    PropTypes.string,       
+    PropTypes.object,
+  ]),
 };
 
 const styles = StyleSheet.create({
@@ -381,7 +448,6 @@ const styles = StyleSheet.create({
   searchbar_container: {
     width: "100%",
     zIndex: 1,
-    backgroundColor: "rgba(255,255,255,0.75)"
   },
   search: {
     ...Platform.select({
@@ -389,7 +455,9 @@ const styles = StyleSheet.create({
         height: 36,
         paddingLeft: 8,
         borderRadius: 10,
-        backgroundColor: "#E5E8E9"
+      },
+      android: {
+        paddingBottom: 8,
       }
     }),
     margin: 8

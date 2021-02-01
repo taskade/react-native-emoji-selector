@@ -1,6 +1,6 @@
 {
-  "name": "react-native-emoji-selector",
-  "version": "0.2.0",
+  "name": "@taskade/react-native-emoji-selector",
+  "version": "0.3.0",
   "description": "A react native emoji selector",
   "main": "index.js",
   "types": "./index.d.ts",
@@ -14,10 +14,25 @@
   "author": "Arron Hunt",
   "license": "MIT",
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.13.3",
     "emoji-datasource": "^6.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/arronhunt/react-native-emoji-selector.git"
+    "url": "git+https://github.com/taskade/react-native-emoji-selector.git"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/runtime": "^7.12.5",
+    "@babel/eslint-parser": "^7.12.1",
+    "eslint": "^7.19.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-react-native": "^3.10.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "metro-react-native-babel-preset": "^0.60.0",
+    "prettier": "^2.2.1"
   }
 }
