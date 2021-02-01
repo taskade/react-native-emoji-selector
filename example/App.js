@@ -1,41 +1,51 @@
-import React from "react";
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
+import React, { useState } from "react";
+import { 
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from "react-native";
 
 import EmojiSelector, { Categories } from "./module";
 const THEME = "#007AFF";
 
-export default class App extends React.Component {
-  state = {
-    emoji: " "
-  };
-  render() {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text>Please select the emoji you would like to use</Text>
-        <View style={styles.display}>
-          <Text style={{ fontSize: 64, backgroundColor: "transparent" }}>
-            {this.state.emoji}
-          </Text>
-        </View>
-        <EmojiSelector
-          onEmojiSelected={emoji => this.setState({ emoji })}
-          showSearchBar={true}
-          showTabs={true}
-          showHistory={true}
-          showSectionTitles={true}
-          category={Categories.all}
-        />
-      </SafeAreaView>
-    );
-  }
+export default function App() {
+  const [emoji, setEmoji] = useState(" ");
+  const isDarkMode = useColorScheme() === 'dark';
+
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#333333' : '#FFFFFF'}]}>
+      <Text style={{color: isDarkMode ? 'white' : 'black'}}>Please select the emoji you would like to use</Text>
+      <View style={styles.display}>
+        <Text style={{ fontSize: 64, backgroundColor: "transparent" }}>
+          {emoji}
+        </Text>
+      </View>
+      <EmojiSelector
+        onEmojiSelected={emoji => setEmoji(emoji)}
+        showSearchBar={true}
+        showTabs={true}
+        showHistory={true}
+        showSectionTitles={true}
+        category={Categories.all}
+      />      
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+
+    ...Platform.select({
+      android: {
+        paddingTop: 40,
+      }
+    })
   },
   display: {
     width: 96,
