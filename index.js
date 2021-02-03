@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import emoji from "emoji-datasource";
+import PropTypes from 'prop-types';
 import React, { Component } from "react";
 import {
   ActivityIndicator,
@@ -12,7 +13,8 @@ import {
   TextInput,
   TouchableOpacity,
   useColorScheme,
-  View} from "react-native";
+  View
+} from "react-native";
 
 export const Categories = {
   all: {
@@ -116,10 +118,10 @@ const SearchBar = (props) => {
         style={[
           styles.search,
           {
-            backgroundColor: Platform.OS === 'ios' && DynamicColorIOS({
+            backgroundColor: Platform.OS === 'ios' ? DynamicColorIOS({
               light: PlatformColor('systemGray6'),
               dark: PlatformColor('systemGray3')
-            }),
+            }) : 'transparent',
             color: Platform.OS === 'ios'
               ? PlatformColor('label')
               : isDarkMode ? '#FFFFFF87' : '#00000087',
@@ -275,7 +277,9 @@ export default class EmojiSelector extends Component {
         return list.map(emoji => ({ key: emoji.unified, emoji }));
       }
     })()
-    return this.props.shouldInclude ? emojiData.filter(e => this.props.shouldInclude(e.emoji)) : emojiData
+    return this.props.shouldInclude 
+      ? emojiData.filter(e => this.props.shouldInclude(e.emoji)) 
+      : emojiData;
   }
 
   prerenderEmojis(callback) {
@@ -394,6 +398,35 @@ EmojiSelector.defaultProps = {
   showSectionTitles: true,
   columns: 6,
   placeholder: "Search..."
+};
+
+EmojiSelector.propTypes = {
+  category: PropTypes.object,
+  columns: PropTypes.number,
+  placeholder: PropTypes.string,
+  showTabs: PropTypes.bool,
+  showSearchBar: PropTypes.bool,
+  showHistory: PropTypes.bool,
+  showSectionTitles: PropTypes.bool,
+  theme: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
+};
+
+EmojiCell.propTypes = {
+  colSize: PropTypes.number,
+  emoji: PropTypes.object,  
+};
+
+SearchBar.propTypes = {
+  placeholder: PropTypes.string,
+  handleSearch: PropTypes.func,
+  searchQuery: PropTypes.string,
+  theme: PropTypes.oneOfType([
+    PropTypes.string,       
+    PropTypes.object,
+  ]),
 };
 
 const styles = StyleSheet.create({

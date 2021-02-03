@@ -7,8 +7,8 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+import EmojiSelector, { Categories } from "react-native-emoji-selector";
 
-import EmojiSelector, { Categories } from "./module";
 const THEME = "#007AFF";
 
 export default function App() {
