@@ -6,7 +6,7 @@
     "react-hooks",
     "simple-import-sort"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true

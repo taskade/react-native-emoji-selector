@@ -1,5 +1,5 @@
 {
-  "name": "react-native-emoji-selector",
+  "name": "@taskade/react-native-emoji-selector",
   "version": "0.3.0",
   "description": "A react native emoji selector",
   "main": "index.js",
@@ -11,14 +11,11 @@
     "emoji",
     "react"
   ],
-  "author": "Amos Tan",
+  "author": "Arron Hunt",
   "license": "MIT",
-  "peerDependencies": {
+  "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.3",
-    "emoji-datasource": "^6.0.0",
-    "prop-types": "^15.7.2",
-    "react": "^16.8.0",
-    "react-native": "^0.63.0"
+    "emoji-datasource": "^6.0.0"
   },
   "repository": {
     "type": "git",
@@ -35,6 +32,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-react-native": "^3.10.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
+    "metro-react-native-babel-preset": "^0.60.0",
     "prettier": "^2.2.1"
   }
 }
