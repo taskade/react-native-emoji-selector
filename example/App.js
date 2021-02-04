@@ -30,6 +30,7 @@ export default function App() {
         showHistory={true}
         showSectionTitles={true}
         category={Categories.all}
+        darkMode={isDarkMode}
       />      
     </SafeAreaView>
   );
