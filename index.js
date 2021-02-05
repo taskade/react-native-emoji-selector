@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   FlatList,
   Platform,
-  PlatformColor,
   StyleSheet,
   Text,
   TextInput,
@@ -372,9 +371,7 @@ export default class EmojiSelector extends Component {
 }
 
 EmojiSelector.defaultProps = {
-  theme: Platform.OS === 'ios'
-    ? PlatformColor('systemBlue', 'Blue')
-    : '#007AFF',
+  theme: '#007AFF',
   category: Categories.all,
   showTabs: true,
   showSearchBar: true,
@@ -457,25 +454,21 @@ const styles = StyleSheet.create({
         paddingLeft: 8,
         borderRadius: 10,
         backgroundColor: '#F2F2F7',
-        color: PlatformColor('darkText'),
       },
       android: {
         paddingBottom: 8,
-        color: '#00000087'
       }
     }),
-    margin: 8
+    margin: 8,
+    color: '#00000087'
   },
   search_dark: {
     ...Platform.select({
       ios: {
-        backgroundColor: 'black',
-        color: PlatformColor('lightText'),
+        backgroundColor: '#48484A',
       },
-      android: {
-        color: '#FFFFFF87',
-      },
-    })
+    }),
+    color: '#FFFFFF87',
   },
   container: {
     flex: 1,
