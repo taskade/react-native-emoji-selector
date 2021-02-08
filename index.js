@@ -10,7 +10,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  ViewPropTypes
 } from "react-native";
 
 export const Categories = {
@@ -308,6 +309,8 @@ export default class EmojiSelector extends Component {
       showSectionTitles,
       showTabs,
       darkMode,
+      contentContainerStyle,
+      flatListStyle,
       ...other
     } = this.props;
 
@@ -339,28 +342,26 @@ export default class EmojiSelector extends Component {
           )}
           {isReady ? (
             <View style={{ flex: 1 }}>
-              <View style={styles.container}>
-                {showSectionTitles && (
-                  <Text style={styles.sectionHeader}>{title}</Text>
-                )}
-                <FlatList
-                  style={styles.scrollview}
-                  contentContainerStyle={{ paddingBottom: colSize }}
-                  data={this.returnSectionData()}
-                  renderItem={this.renderEmojiCell}
-                  horizontal={false}
-                  numColumns={columns}
-                  keyboardShouldPersistTaps={"always"}
-                  ref={scrollview => (this.scrollview = scrollview)}
-                  removeClippedSubviews
-                />
-              </View>
-            </View>
+              {showSectionTitles && (
+                <Text style={styles.sectionHeader}>{title}</Text>
+              )}
+              <FlatList
+                style={[{ flex: 1 }, flatListStyle]}
+                contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
+                data={this.returnSectionData()}
+                renderItem={this.renderEmojiCell}
+                horizontal={false}
+                numColumns={columns}
+                keyboardShouldPersistTaps={"always"}
+                ref={scrollview => (this.scrollview = scrollview)}
+                removeClippedSubviews
+              />
+            </View> 
           ) : (
             <View style={styles.loader} {...other}>
               <ActivityIndicator
                 size={"large"}
-                color={Platform.OS === "android" ? theme : "#000000"}
+                color={theme}
               />
             </View>
           )}
@@ -379,7 +380,9 @@ EmojiSelector.defaultProps = {
   showSectionTitles: true,
   darkMode: false,
   columns: 6,
-  placeholder: "Search..."
+  placeholder: "Search...",
+  contentContainerStyle: undefined,
+  flatListStyle: undefined,
 };
 
 EmojiSelector.propTypes = {
@@ -395,6 +398,8 @@ EmojiSelector.propTypes = {
     PropTypes.object,
   ]),
   darkMode: PropTypes.bool,
+  contentContainerStyle: ViewPropTypes.style,
+  flatListStyle: ViewPropTypes.style,
 };
 
 EmojiCell.propTypes = {
@@ -440,9 +445,6 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: "row"
   },
-  scrollview: {
-    flex: 1
-  },
   searchbar_container: {
     width: "100%",
     zIndex: 1,
@@ -469,12 +471,6 @@ const styles = StyleSheet.create({
       },
     }),
     color: '#FFFFFF87',
-  },
-  container: {
-    flex: 1,
-    flexWrap: "wrap",
-    flexDirection: "row",
-    alignItems: "flex-start"
   },
   sectionHeader: {
     margin: 8,
