@@ -52,7 +52,9 @@ The available categories are `all`, `emotion`, `people`, `nature`, `food`, `acti
 | category          | _enum_   | `"all"`       | Set the default category. Use the `Categories` class     |
 | columns           | _number_ | `6`           | Number of columns accross                                |
 | placeholder       | _string_ | `"Search..."` | A string placeholder when there is no text in text input |
+| darkMode          | _bool_   | `false`       | Toggle dark mode on or off                               |
 | shouldInclude     | _func_   |               | Function called to check for emoji inclusion             |
+
 
 ## Contributors
 
@@ -64,3 +66,4 @@ Special thanks to everyone who has contributed to this project!
 [![Anastasiia Kravchenko](https://avatars3.githubusercontent.com/u/4223266?s=80&v=4)](https://github.com/St1ma)
 [![Sindre](https://avatars3.githubusercontent.com/u/4065840?s=80&v=4)](https://github.com/sseppola)
 [![Lucas Feijo](https://avatars3.githubusercontent.com/u/4157166?s=80&v=4)](https://github.com/lucasfeijo)
+[![Amos Tan](https://avatars3.githubusercontent.com/u/8110786?s=80&v=4)](https://github.com/alphatrl)
