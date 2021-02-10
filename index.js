@@ -309,8 +309,9 @@ export default class EmojiSelector extends Component {
       showSectionTitles,
       showTabs,
       darkMode,
+      pickerStyle,
+      pickerFlatListStyle,
       contentContainerStyle,
-      flatListStyle,
       ...other
     } = this.props;
 
@@ -318,53 +319,55 @@ export default class EmojiSelector extends Component {
     const title = searchQuery !== "" ? "Search Results" : category.name;
 
     return (
-      <View style={styles.frame} {...other} onLayout={this.handleLayout}>
-        <View style={styles.tabBar}>
-          {showTabs && (
-            <TabBar
-              activeCategory={category}
+      <View style={[styles.frame, {pickerStyle}]} {...other} onLayout={this.handleLayout}>
+        <View style={{ flex : 1 }} onLayout={this.handleLayout}>
+          <View style={styles.tabBar}>
+            {showTabs && (
+              <TabBar
+                activeCategory={category}
+                darkMode={darkMode}
+                onPress={this.handleTabSelect}
+                theme={theme}
+                width={this.state.width}
+              />
+            )}
+          </View>
+          <View style={{ flex: 1 }}>
+            {showSearchBar && (
+            <SearchBar
               darkMode={darkMode}
-              onPress={this.handleTabSelect}
+              placeholder={placeholder}
               theme={theme}
-              width={this.state.width}
-            />
-          )}
-        </View>
-        <View style={{ flex: 1 }}>
-          {showSearchBar && (
-          <SearchBar
-            darkMode={darkMode}
-            placeholder={placeholder}
-            theme={theme}
-            searchQuery={searchQuery}
-            handleSearch={this.handleSearch}
-            />
-          )}
-          {isReady ? (
-            <View style={{ flex: 1 }}>
-              {showSectionTitles && (
-                <Text style={styles.sectionHeader}>{title}</Text>
-              )}
-              <FlatList
-                style={[{ flex: 1 }, flatListStyle]}
-                contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
-                data={this.returnSectionData()}
-                renderItem={this.renderEmojiCell}
-                horizontal={false}
-                numColumns={columns}
-                keyboardShouldPersistTaps={"always"}
-                ref={scrollview => (this.scrollview = scrollview)}
-                removeClippedSubviews
+              searchQuery={searchQuery}
+              handleSearch={this.handleSearch}
               />
-            </View> 
-          ) : (
-            <View style={styles.loader} {...other}>
-              <ActivityIndicator
-                size={"large"}
-                color={theme}
-              />
-            </View>
-          )}
+            )}
+            {isReady ? (
+              <View style={{ flex: 1 }}>
+                {showSectionTitles && (
+                  <Text style={styles.sectionHeader}>{title}</Text>
+                )}
+                <FlatList
+                  style={[{ flex: 1 }, pickerFlatListStyle]}
+                  contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
+                  data={this.returnSectionData()}
+                  renderItem={this.renderEmojiCell}
+                  horizontal={false}
+                  numColumns={columns}
+                  keyboardShouldPersistTaps={"always"}
+                  ref={scrollview => (this.scrollview = scrollview)}
+                  removeClippedSubviews
+                />
+              </View> 
+            ) : (
+              <View style={styles.loader} {...other}>
+                <ActivityIndicator
+                  size={"large"}
+                  color={theme}
+                />
+              </View>
+            )}
+          </View>
         </View>
       </View>
     );
@@ -382,7 +385,8 @@ EmojiSelector.defaultProps = {
   columns: 6,
   placeholder: "Search...",
   contentContainerStyle: undefined,
-  flatListStyle: undefined,
+  pickerStyle: undefined,
+  pickerFlatListStyle: undefined,
 };
 
 EmojiSelector.propTypes = {
@@ -399,7 +403,9 @@ EmojiSelector.propTypes = {
   ]),
   darkMode: PropTypes.bool,
   contentContainerStyle: ViewPropTypes.style,
-  flatListStyle: ViewPropTypes.style,
+  pickerStyle: ViewPropTypes.style,
+  pickerFlatListStyle: ViewPropTypes.style,
+
 };
 
 EmojiCell.propTypes = {
