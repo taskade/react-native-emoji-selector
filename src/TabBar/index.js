@@ -6,7 +6,6 @@ import {Text, TouchableOpacity} from 'react-native';
 const TabBar = (props) => {
   const { theme, activeCategory, onPress, width, darkMode, categoryKeys, categories } = props;
   const tabSize = width / categoryKeys.length;
-  console.log(categories)
 
   return categoryKeys.map(c => {
     const category = categories[c];

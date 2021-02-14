@@ -7,12 +7,11 @@ import {
   FlatList,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   ViewPropTypes
 } from "react-native";
 
-import { SearchBar, TabBar } from './src';
+import { EmojiCell, SearchBar, TabBar } from './src';
 
 export const Categories = {
   all: {
@@ -69,23 +68,6 @@ const emojiByCategory = category =>
   filteredEmojis.filter(e => e.category === category);
 const sortEmoji = list => list.sort((a, b) => a.sort_order - b.sort_order);
 const categoryKeys = Object.keys(Categories);
-
-const EmojiCell = ({ emoji, colSize, ...other }) => (
-  <TouchableOpacity
-    activeOpacity={0.5}
-    style={{
-      width: colSize,
-      height: colSize,
-      alignItems: "center",
-      justifyContent: "center"
-    }}
-    {...other}
-  >
-    <Text style={{ color: "#FFFFFF", fontSize: colSize - 12 }}>
-      {charFromEmojiObject(emoji)}
-    </Text>
-  </TouchableOpacity>
-);
 
 const storage_key = "@react-native-emoji-selector:HISTORY";
 export default class EmojiSelector extends Component {
@@ -159,14 +141,16 @@ export default class EmojiSelector extends Component {
   //
   //  RENDER METHODS
   //
-  renderEmojiCell = ({ item }) => (
-    <EmojiCell
-      key={item.key}
-      emoji={item.emoji}
-      onPress={() => this.handleEmojiSelect(item.emoji)}
-      colSize={this.state.colSize}
+  renderEmojiCell = ({ item }) => {
+    return (
+      <EmojiCell
+        key={item.key}
+        emoji={charFromEmojiObject(item.emoji)}
+        onPress={() => this.handleEmojiSelect(item.emoji)}
+        colSize={this.state.colSize}
     />
-  );
+    )
+  }
 
   returnSectionData() {
     const { history, emojiList, searchQuery, category } = this.state;
@@ -249,7 +233,6 @@ export default class EmojiSelector extends Component {
       theme,
       columns,
       placeholder,
-      showHistory,
       showSearchBar,
       showSectionTitles,
       showTabs,
@@ -344,6 +327,8 @@ EmojiSelector.propTypes = {
   showSearchBar: PropTypes.bool,
   showHistory: PropTypes.bool,
   showSectionTitles: PropTypes.bool,
+  shouldInclude: PropTypes.bool,
+  onEmojiSelected: PropTypes.func,
   theme: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
@@ -352,12 +337,6 @@ EmojiSelector.propTypes = {
   contentContainerStyle: ViewPropTypes.style,
   pickerStyle: ViewPropTypes.style,
   pickerFlatListStyle: ViewPropTypes.style,
-
-};
-
-EmojiCell.propTypes = {
-  colSize: PropTypes.number,
-  emoji: PropTypes.object,  
 };
 
 const styles = StyleSheet.create({
