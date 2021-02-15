@@ -247,7 +247,7 @@ export default class EmojiSelector extends Component {
     const title = searchQuery !== "" ? "Search Results" : category.name;
 
     return (
-      <View style={[styles.frame, {pickerStyle}]} {...other} onLayout={this.handleLayout}>
+      <View style={[styles.frame, pickerStyle ]} {...other} onLayout={this.handleLayout}>
         <View style={{ flex : 1 }} onLayout={this.handleLayout}>
           <View style={styles.tabBar}>
             {showTabs && (
@@ -327,7 +327,7 @@ EmojiSelector.propTypes = {
   showSearchBar: PropTypes.bool,
   showHistory: PropTypes.bool,
   showSectionTitles: PropTypes.bool,
-  shouldInclude: PropTypes.bool,
+  shouldInclude: PropTypes.func,
   onEmojiSelected: PropTypes.func,
   theme: PropTypes.oneOfType([
     PropTypes.string,
