@@ -1,17 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import emoji from "emoji-datasource";
 import PropTypes from 'prop-types';
-import React, { Component } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   StyleSheet,
-  Text,
   View,
   ViewPropTypes
 } from "react-native";
 
-import { EmojiCell, SearchBar, TabBar } from './src';
+import { Picker, SearchBar, TabBar } from './src';
+import { charFromEmojiObject } from './src/helpers';
 
 export const Categories = {
   all: {
@@ -60,251 +59,146 @@ export const Categories = {
   }
 };
 
-const charFromUtf16 = utf16 =>
-  String.fromCodePoint(...utf16.split("-").map(u => "0x" + u));
-export const charFromEmojiObject = obj => charFromUtf16(obj.unified);
 const filteredEmojis = emoji.filter(e => !e["obsoleted_by"]);
-const emojiByCategory = category =>
-  filteredEmojis.filter(e => e.category === category);
-const sortEmoji = list => list.sort((a, b) => a.sort_order - b.sort_order);
+const emojiByCategory = (category) => filteredEmojis.filter(e => e.category === category)
+const sortEmoji = (list) => list.sort((a, b) => a.sort_order - b.sort_order);
 const categoryKeys = Object.keys(Categories);
-
 const storage_key = "@react-native-emoji-selector:HISTORY";
-export default class EmojiSelector extends Component {
-  state = {
-    searchQuery: "",
-    category: Categories.people,
-    isReady: false,
-    history: [],
-    emojiList: null,
-    colSize: 0,
-    width: 0,
-  };
 
-  //
-  //  HANDLER METHODS
-  //
-  handleTabSelect = category => {
-    if (this.state.isReady) {
-      if (this.scrollview)
-        this.scrollview.scrollToOffset({ x: 0, y: 0, animated: false });
-      this.setState({
-        searchQuery: "",
-        category
-      });
+const EmojiSelector = (props) => {
+  const { 
+    category,
+    columns,
+    darkMode,
+    placeholder,
+    showTabs,
+    showSearchBar,
+    showHistory,
+    shouldInclude,
+    onEmojiSelected,
+    theme,
+    contentContainerStyle,
+    pickerStyle,
+    pickerFlatListStyle,
+    ...others
+  } = props;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isReady, setReady] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [emojiData, setEmojiData] = useState({});
+  const [width, onLayout] = useComponentWidth();
+  const colSize = useMemo(() => {
+    console.log(columns, width)
+    if (columns === 0) {
+      return 0;
     }
-  };
+    return Math.floor(width/columns);
+  }, [width, columns]);
+  const scrollView = useRef(null);
 
-  handleEmojiSelect = emoji => {
-    if (this.props.showHistory) {
-      this.addToHistoryAsync(emoji);
-    }
-    this.props.onEmojiSelected(charFromEmojiObject(emoji));
-  };
+  useEffect(() => {
+    const prerenderEmojis = () => {
+      const emojiList = [];
+      const stickyIndex = []
+      let index = 0;
 
-  handleSearch = searchQuery => {
-    this.setState({ searchQuery });
-  };
+      categoryKeys.forEach((category) => {
+        const name = Categories[category].name;
 
-  addToHistoryAsync = async emoji => {
-    let history = await AsyncStorage.getItem(storage_key);
-
-    let value = [];
-    if (!history) {
-      // no history
-      let record = Object.assign({}, emoji, { count: 1 });
-      value.push(record);
-    } else {
-      let json = JSON.parse(history);
-      if (json.filter(r => r.unified === emoji.unified).length > 0) {
-        value = json;
-      } else {
-        let record = Object.assign({}, emoji, { count: 1 });
-        value = [record, ...json];
-      }
-    }
-
-    AsyncStorage.setItem(storage_key, JSON.stringify(value));
-    this.setState({
-      history: value
-    });
-  };
-
-  loadHistoryAsync = async () => {
-    let result = await AsyncStorage.getItem(storage_key);
-    if (result) {
-      let history = JSON.parse(result);
-      this.setState({ history });
-    }
-  };
-
-  //
-  //  RENDER METHODS
-  //
-  renderEmojiCell = ({ item }) => {
-    return (
-      <EmojiCell
-        key={item.key}
-        emoji={charFromEmojiObject(item.emoji)}
-        onPress={() => this.handleEmojiSelect(item.emoji)}
-        colSize={this.state.colSize}
-    />
-    )
-  }
-
-  returnSectionData() {
-    const { history, emojiList, searchQuery, category } = this.state;
-    const emojiData = () => {
-      if (category === Categories.all && searchQuery === '') {
-        // TODO: OPTIMISE THIS
-        let largeList = [];
-        categoryKeys.forEach((cat) => {
-          const name = Categories[cat].name;
-          const list = (name === Categories.history.name) ? history : emojiList[name];
-          if (cat !== 'all' && cat !== 'history') {
-            largeList = largeList.concat(list)
-          }
-        })
-        return largeList.map((emoji) => ({
-          key: emoji.unified,
-          emoji
-        }));
-      } else { 
-        let list = [];
-        const name = category.name;
-        if (searchQuery !== '') {
-          const filtered = emoji.filter((e) => {
-            return e.short_names.some((name) => {
-              return name.includes(searchQuery.toLowerCase());
-            }); 
-          });
-          list = sortEmoji(filtered);
+        if (category !== 'all' && category !== 'history') {
+          const emoji = sortEmoji(emojiByCategory(name));
+          emojiList.push({data: name, index: index, isHeader: true});
+          emojiList.push({
+            data: shouldInclude ? emoji.filter((e) => shouldInclude(e)) : emoji,
+            index: index + 1,
+            isHeader: false,
+          })
+          stickyIndex.push(index)
+          index += 2; 
         }
-        else if (name === Categories.history.name) { list = history; }
-        else { list = emojiList[name] }
+      })
+      setEmojiData({data: emojiList, stickyIndex: stickyIndex});
+    }
 
-        return list.map((emoji) => ({
-          key: emoji.unified,
-          emoji
-        }));
+    const loadHistoryAsync = async () => {
+      const result = await AsyncStorage.getItem(storage_key);
+      if (result) {
+        setHistory(JSON.parse(result))
       }
     }
+    
+    showHistory && loadHistoryAsync();
+    prerenderEmojis();
+    setReady(true);
+  },[]);
 
-    return this.props.shouldInclude 
-      ? emojiData().filter(e => this.props.shouldInclude(e.emoji)) 
-      : emojiData();
+  const handleEmojiSelect = (emoji) => {
+    onEmojiSelected(charFromEmojiObject(emoji));
   }
 
-  prerenderEmojis(callback) {
-    let emojiList = {};
-    categoryKeys.forEach(c => {
-      let name = Categories[c].name;
-      emojiList[name] = sortEmoji(emojiByCategory(name));
-    });
 
-    this.setState(
-      {
-        emojiList,
-        colSize: Math.floor(this.state.width / this.props.columns)
-      },
-      callback
-    );
-  }
+  return (
+    <View style={[styles.frame, pickerStyle]} {...others}>
+      <View style={{ flex : 1 }} onLayout={onLayout}>
+        <TabBar
+          isShown={showTabs}
+          activeCategory={category}
+          darkMode={darkMode}
+          theme={theme}
+          width={width}
+          categoryKeys={categoryKeys}
+          categories={Categories}
+          // onPress={this.handleTabSelect}
+        />
 
-  handleLayout = ({ nativeEvent: { layout } }) => {
-    this.setState({ width: layout.width }, () => {
-      this.prerenderEmojis(() => {
-        this.setState({ isReady: true });
-      });
-    });
-  };
+        <View style={{flex: 1}}>
+          <SearchBar
+            isShown={showSearchBar}
+            darkMode={darkMode}
+            placeholder={placeholder}
+            theme={theme}
+            searchQuery={searchQuery}
+            handleSearch={(query) => setSearchQuery(query)}
+          />
 
-  //
-  //  LIFECYCLE METHODS
-  //
-  componentDidMount() {
-    const { category, showHistory } = this.props;
-    this.setState({ category });
-
-    if (showHistory) {
-      this.loadHistoryAsync();
-    }
-  }
-
-  render() {
-    const {
-      theme,
-      columns,
-      placeholder,
-      showSearchBar,
-      showSectionTitles,
-      showTabs,
-      darkMode,
-      pickerStyle,
-      pickerFlatListStyle,
-      contentContainerStyle,
-      ...other
-    } = this.props;
-
-    const { category, colSize, isReady, searchQuery } = this.state;
-    const title = searchQuery !== "" ? "Search Results" : category.name;
-
-    return (
-      <View style={[styles.frame, pickerStyle ]} {...other} onLayout={this.handleLayout}>
-        <View style={{ flex : 1 }} onLayout={this.handleLayout}>
-          <View style={styles.tabBar}>
-            {showTabs && (
-              <TabBar
-                activeCategory={category}
-                darkMode={darkMode}
-                onPress={this.handleTabSelect}
-                theme={theme}
-                width={this.state.width}
-                categoryKeys={categoryKeys}
-                categories={Categories}
-              />
-            )}
-          </View>
-          <View style={{ flex: 1 }}>
-            {showSearchBar && (
-            <SearchBar
-              darkMode={darkMode}
-              placeholder={placeholder}
-              theme={theme}
-              searchQuery={searchQuery}
-              handleSearch={this.handleSearch}
-              />
-            )}
-            {isReady ? (
-              <View style={{ flex: 1 }}>
-                {showSectionTitles && (
-                  <Text style={styles.sectionHeader}>{title}</Text>
-                )}
-                <FlatList
-                  style={[{ flex: 1 }, pickerFlatListStyle]}
-                  contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
-                  data={this.returnSectionData()}
-                  renderItem={this.renderEmojiCell}
-                  horizontal={false}
-                  numColumns={columns}
-                  keyboardShouldPersistTaps={"always"}
-                  ref={scrollview => (this.scrollview = scrollview)}
-                  removeClippedSubviews
-                />
-              </View> 
-            ) : (
-              <View style={styles.loader} {...other}>
-                <ActivityIndicator
-                  size={"large"}
-                  color={theme}
-                />
-              </View>
-            )}
-          </View>
+          {!isReady ? (
+            <Loading theme={theme} {...others} />
+          ) : (
+            <Picker 
+              pickerFlatListStyle={pickerFlatListStyle}
+              contentContainerStyle={contentContainerStyle}
+              onEmojiSelected={handleEmojiSelect}
+              colSize={colSize}
+              data={emojiData}
+              ref={scrollView}
+            />
+          )}
         </View>
       </View>
-    );
-  }
+    </View>
+  );
+};
+
+// Loading spinner as we load emoji
+const Loading = (props) => {
+  const {theme, ...others} = props;
+  return (
+    <View style={styles.loader} {...others}>
+      <ActivityIndicator
+        size={"large"}
+        color={theme}
+      />
+    </View>
+  )
+}
+
+// Get width of container to calculate sizing of tabs
+const useComponentWidth = () => {
+  const [width, setWidth] = useState(0);
+  const onLayout = useCallback((event) => {
+    setWidth(event.nativeEvent.layout.width);
+  });
+  return [width, onLayout];
 }
 
 EmojiSelector.defaultProps = {
@@ -316,7 +210,7 @@ EmojiSelector.defaultProps = {
   showSectionTitles: true,
   darkMode: false,
   columns: 6,
-  placeholder: "Search...",
+  placeholder: "Search",
   contentContainerStyle: undefined,
   pickerStyle: undefined,
   pickerFlatListStyle: undefined,
@@ -331,7 +225,7 @@ EmojiSelector.propTypes = {
   showHistory: PropTypes.bool,
   showSectionTitles: PropTypes.bool,
   shouldInclude: PropTypes.func,
-  onEmojiSelected: PropTypes.func,
+  onEmojiSelected: PropTypes.func.isRequired,
   theme: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.object,
@@ -341,6 +235,13 @@ EmojiSelector.propTypes = {
   pickerStyle: ViewPropTypes.style,
   pickerFlatListStyle: ViewPropTypes.style,
 };
+
+Loading.propTypes = {
+  theme: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
+}
 
 const styles = StyleSheet.create({
   frame: {
@@ -352,9 +253,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-  tabBar: {
-    flexDirection: "row"
-  },
   sectionHeader: {
     margin: 8,
     fontSize: 17,
@@ -362,3 +260,5 @@ const styles = StyleSheet.create({
     color: "#8F8F8F"
   }
 });
+
+export default EmojiSelector;

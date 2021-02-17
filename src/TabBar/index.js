@@ -1,45 +1,58 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import {StyleSheet,Text, TouchableOpacity, View} from 'react-native';
 
 
 const TabBar = (props) => {
-  const { theme, activeCategory, onPress, width, darkMode, categoryKeys, categories } = props;
+  const { isShown, theme, activeCategory, onPress, width, darkMode, categoryKeys, categories } = props;
   const tabSize = width / categoryKeys.length;
 
-  return categoryKeys.map(c => {
+  const Tabs = categoryKeys.map(c => {
     const category = categories[c];
-    if (c !== "all")
-    return (
-      <TouchableOpacity
-        key={category.name}
-        onPress={() => onPress(category)}
-        style={{
-          flex: 1,
-          height: tabSize,
-          borderColor: category === activeCategory 
-          ? theme 
-          : darkMode ? "#8E8E93" : '#E5E5EA',
-          borderBottomWidth: 2,
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        <Text
+    if (c !== "all") {
+      return (
+        <TouchableOpacity
+          key={category.name}
+          onPress={() => onPress(category)}
           style={{
-            textAlign: "center",
-            paddingBottom: 8,
-            fontSize: tabSize - 24
+            flex: 1,
+            height: tabSize,
+            borderColor: category === activeCategory 
+            ? theme 
+            : darkMode ? "#8E8E93" : '#E5E5EA',
+            borderBottomWidth: 2,
+            alignItems: "center",
+            justifyContent: "center"
           }}
         >
-            {category.symbol}
-        </Text>
-      </TouchableOpacity>
-    );
+          <Text
+            style={{
+              textAlign: "center",
+              paddingBottom: 8,
+              fontSize: tabSize - 24
+            }}
+          >
+              {category.symbol}
+          </Text>
+        </TouchableOpacity>      
+      );
+    }
   });
+
+  return isShown && (
+    <View style={styles.tabBar}>
+      {Tabs}
+    </View>
+  )
 };
 
+TabBar.defaultProps = {
+  isShown: true,
+  onPress: undefined,
+}
+
 TabBar.propTypes = {
+  isShown: PropTypes.bool,
   activeCategory: PropTypes.shape({
     "symbol": PropTypes.string,
     "name": PropTypes.string,
@@ -54,5 +67,11 @@ TabBar.propTypes = {
   categoryKeys: PropTypes.array,
   categories: PropTypes.object,
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    flexDirection: "row",
+  }
+});
 
 export default TabBar;

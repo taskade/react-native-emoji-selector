@@ -13,7 +13,7 @@ const EmojiCell = (props) => {
 				width: colSize,
 				height: colSize,
 				alignItems: "center",
-				justifyContent: "center"
+				justifyContent: "center",
 			}}
 			{...other}
 		>
@@ -25,7 +25,7 @@ const EmojiCell = (props) => {
 }
 
 EmojiCell.propTypes = {
-	emoji: PropTypes.string,
+	emoji: PropTypes.string.isRequired,
 	colSize: PropTypes.number,
 	onPress: PropTypes.func,
 }
