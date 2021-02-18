@@ -10,11 +10,13 @@ import {
 
 import EmojiSelector, { Categories } from "./src/emoji-selector";
 
-const THEME = "#007AFF";
-
 export default function App() {
   const [emoji, setEmoji] = useState(" ");
   const isDarkMode = useColorScheme() === 'dark';
+  const theme = {
+    background: isDarkMode ? '#333333' : '#FFFFFF',
+    primary: '#007AFF',
+  }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#333333' : '#FFFFFF'}]}>
@@ -32,6 +34,7 @@ export default function App() {
         showSectionTitles={true}
         category={Categories.all}
         darkMode={isDarkMode}
+        theme={theme}
       />      
     </SafeAreaView>
   );
@@ -55,7 +58,7 @@ const styles = StyleSheet.create({
     margin: 24,
     borderWidth: 2,
     borderRadius: 12,
-    borderColor: THEME,
+    borderColor: '#007AFF',
     alignItems: "center",
     justifyContent: "center"
   }

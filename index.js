@@ -11,6 +11,7 @@ import {
 
 import { Picker, SearchBar, TabBar } from './src';
 import { charFromEmojiObject } from './src/helpers';
+import { DARK_THEME,LIGHT_THEME } from './src/themes.js';
 
 export const Categories = {
   all: {
@@ -83,18 +84,21 @@ const EmojiSelector = (props) => {
     ...others
   } = props;
   const [searchQuery, setSearchQuery] = useState('');
-  const [isReady, setReady] = useState(false);
+  const [isEmojiPrerender, setEmojiPrerender] = useState(false);
+  const [isComponentReady, setComponentReady] = useState(false);
   const [history, setHistory] = useState([]);
   const [emojiData, setEmojiData] = useState({});
   const [width, onLayout] = useComponentWidth();
+  const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
   const colSize = useMemo(() => {
-    console.log(columns, width)
-    if (columns === 0) {
+    setComponentReady(width !== 0);
+    if (isComponentReady) {
       return 0;
     }
     return Math.floor(width/columns);
   }, [width, columns]);
   const scrollView = useRef(null);
+  
 
   useEffect(() => {
     const prerenderEmojis = () => {
@@ -129,22 +133,24 @@ const EmojiSelector = (props) => {
     
     showHistory && loadHistoryAsync();
     prerenderEmojis();
-    setReady(true);
+    setEmojiPrerender(true);
   },[]);
 
   const handleEmojiSelect = (emoji) => {
     onEmojiSelected(charFromEmojiObject(emoji));
   }
 
+  const primaryColor = theme.primary ? theme.primary : defaultTheme.primary;
+  const backgroundColor = theme.background ? theme.background : defaultTheme.background;
 
   return (
-    <View style={[styles.frame, pickerStyle]} {...others}>
+    <View style={[styles.frame, {backgroundColor: backgroundColor}, pickerStyle]} {...others}>
       <View style={{ flex : 1 }} onLayout={onLayout}>
         <TabBar
           isShown={showTabs}
           activeCategory={category}
           darkMode={darkMode}
-          theme={theme}
+          theme={primaryColor}
           width={width}
           categoryKeys={categoryKeys}
           categories={Categories}
@@ -156,13 +162,13 @@ const EmojiSelector = (props) => {
             isShown={showSearchBar}
             darkMode={darkMode}
             placeholder={placeholder}
-            theme={theme}
+            theme={primaryColor}
             searchQuery={searchQuery}
             handleSearch={(query) => setSearchQuery(query)}
           />
 
-          {!isReady ? (
-            <Loading theme={theme} {...others} />
+          {!(isComponentReady && isEmojiPrerender)  ? (
+            <Loading theme={primaryColor} {...others} />
           ) : (
             <Picker 
               pickerFlatListStyle={pickerFlatListStyle}
@@ -171,6 +177,8 @@ const EmojiSelector = (props) => {
               colSize={colSize}
               data={emojiData}
               ref={scrollView}
+              darkMode={darkMode}
+              theme={theme}
             />
           )}
         </View>
@@ -202,7 +210,7 @@ const useComponentWidth = () => {
 }
 
 EmojiSelector.defaultProps = {
-  theme: '#007AFF',
+  theme: {},
   category: Categories.all,
   showTabs: true,
   showSearchBar: true,
@@ -226,10 +234,7 @@ EmojiSelector.propTypes = {
   showSectionTitles: PropTypes.bool,
   shouldInclude: PropTypes.func,
   onEmojiSelected: PropTypes.func.isRequired,
-  theme: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-  ]),
+  theme: PropTypes.object,
   darkMode: PropTypes.bool,
   contentContainerStyle: ViewPropTypes.style,
   pickerStyle: ViewPropTypes.style,

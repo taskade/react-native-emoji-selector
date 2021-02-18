@@ -3,7 +3,8 @@ import React from 'react';
 import { FlatList, StyleSheet, Text, View, ViewPropTypes } from 'react-native';
 
 import { charFromEmojiObject } from '../helpers';
-import { EmojiCell } from './components'
+import { DARK_THEME, LIGHT_THEME } from '../themes';
+import { EmojiCell, Header } from './components'
 
 const Picker = React.forwardRef((props, ref) => {
   const {
@@ -12,8 +13,11 @@ const Picker = React.forwardRef((props, ref) => {
     onEmojiSelected,
     colSize,
     data,
+    darkMode,
+    theme,
   } = props;
   const {data: emojiList, stickyIndex} = data;
+  const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
   
   return (
     <FlatList 
@@ -27,19 +31,22 @@ const Picker = React.forwardRef((props, ref) => {
       stickyHeaderIndices={stickyIndex}
       renderItem={({item: {data: content, isHeader}}) => {
         return isHeader ? (
-          <Text style={styles.sectionHeader}>{content}</Text>
+          <Header 
+            backgroundColor={theme.background ? theme.background : defaultTheme.background}
+            style={styles.sectionHeader}
+          >
+            {content}
+          </Header>
         ) : (
           <View style={styles.emojiContainer}>
             {
               content.map((emoji, i) => (
-                <View key={i}>
                 <EmojiCell
-                  
+                  key={i}
                   onPress={()=>onEmojiSelected(emoji)}
                   colSize={colSize}
                   emoji={charFromEmojiObject(emoji)}
                 />
-                </View>
               )
             )}
           </View>
@@ -59,7 +66,9 @@ Picker.propTypes = {
   colSize: PropTypes.number,
   data: PropTypes.object,
   onEmojiSelected: PropTypes.func.isRequired,
-}
+  darkMode: PropTypes.bool,
+  theme: PropTypes.object,
+};
 
 const styles = StyleSheet.create({
   sectionHeader: {
