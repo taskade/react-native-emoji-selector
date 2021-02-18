@@ -14,13 +14,9 @@ import { charFromEmojiObject } from './src/helpers';
 import { DARK_THEME,LIGHT_THEME } from './src/themes.js';
 
 export const Categories = {
-  all: {
-    symbol: null,
-    name: "All"
-  },
   history: {
     symbol: "🕘",
-    name: "Recently used"
+    name: "Recently Used"
   },
   emotion: {
     symbol: "😀",
@@ -68,7 +64,6 @@ const storage_key = "@react-native-emoji-selector:HISTORY";
 
 const EmojiSelector = (props) => {
   const { 
-    category,
     columns,
     darkMode,
     placeholder,
@@ -85,14 +80,15 @@ const EmojiSelector = (props) => {
   } = props;
   const [searchQuery, setSearchQuery] = useState('');
   const [isEmojiPrerender, setEmojiPrerender] = useState(false);
-  const [isComponentReady, setComponentReady] = useState(false);
+  // const [isComponentReady, setComponentReady] = useState(false);
   const [history, setHistory] = useState([]);
   const [emojiData, setEmojiData] = useState({});
+  const [currentCategory, setCurrentCategory] = useState(Categories.history);
   const [width, onLayout] = useComponentWidth();
   const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
   const colSize = useMemo(() => {
-    setComponentReady(width !== 0);
-    if (isComponentReady) {
+    // setComponentReady(width !== 0);
+    if (width === 0) {
       return 0;
     }
     return Math.floor(width/columns);
@@ -101,15 +97,23 @@ const EmojiSelector = (props) => {
   
 
   useEffect(() => {
-    const prerenderEmojis = () => {
+    const prerenderEmojis = async () => {
       const emojiList = [];
       const stickyIndex = []
       let index = 0;
 
-      categoryKeys.forEach((category) => {
-        const name = Categories[category].name;
+      if (showHistory) {
+        const newHistory = await _loadHistoryAsync();
+        const name = Categories['history'].name;
+        setHistory(newHistory);
+        emojiList.push({data: name, index: index, isHeader: true});
+        emojiList.push({data: newHistory, index: index + 1, isHeader: false})
+      }
 
-        if (category !== 'all' && category !== 'history') {
+      for (const key of categoryKeys) {
+        const name = Categories[key].name;
+
+        if (key !== 'history') {
           const emoji = sortEmoji(emojiByCategory(name));
           emojiList.push({data: name, index: index, isHeader: true});
           emojiList.push({
@@ -118,26 +122,50 @@ const EmojiSelector = (props) => {
             isHeader: false,
           })
           stickyIndex.push(index)
-          index += 2; 
         }
-      })
+        index += 2; 
+      }
       setEmojiData({data: emojiList, stickyIndex: stickyIndex});
+      setEmojiPrerender(true);
     }
 
-    const loadHistoryAsync = async () => {
-      const result = await AsyncStorage.getItem(storage_key);
-      if (result) {
-        setHistory(JSON.parse(result))
-      }
-    }
-    
-    showHistory && loadHistoryAsync();
     prerenderEmojis();
-    setEmojiPrerender(true);
   },[]);
 
-  const handleEmojiSelect = (emoji) => {
+  const _loadHistoryAsync = async () => {
+    const result = await AsyncStorage.getItem(storage_key);
+    if (result) {
+      return JSON.parse(result);
+    } 
+  }
+
+  const _handleEmojiSelect = (emoji) => {
+    console.log(emoji)
     onEmojiSelected(charFromEmojiObject(emoji));
+  }
+
+  const _handleTabSelect = (category) => {
+    if (isEmojiPrerender) {
+      const index = categoryKeys.findIndex(key => key === category);
+      setCurrentCategory(Categories[category])
+      scrollView.current.scrollToIndex({
+        animated: true,
+        index: index * 2,
+      });
+    }
+  }
+
+  const _handleViewableEmoji = (index) => {
+    // only update at the emoji header
+    if (index % 2 === 0) {
+      const emojiList = emojiData.data.find(key => key.index === index);
+      categoryKeys.forEach(key => {
+        if (Categories[key].name === emojiList.data) {
+          setCurrentCategory(Categories[key]);
+        }
+      })
+    }
+    
   }
 
   const primaryColor = theme.primary ? theme.primary : defaultTheme.primary;
@@ -146,34 +174,39 @@ const EmojiSelector = (props) => {
   return (
     <View style={[styles.frame, {backgroundColor: backgroundColor}, pickerStyle]} {...others}>
       <View style={{ flex : 1 }} onLayout={onLayout}>
-        <TabBar
-          isShown={showTabs}
-          activeCategory={category}
-          darkMode={darkMode}
-          theme={primaryColor}
-          width={width}
-          categoryKeys={categoryKeys}
-          categories={Categories}
-          // onPress={this.handleTabSelect}
-        />
+        {showTabs && (
+          <TabBar
+            activeCategory={currentCategory}
+            darkMode={darkMode}
+            theme={primaryColor}
+            width={width}
+            categoryKeys={categoryKeys}
+            categories={Categories}
+            reference={scrollView}
+            onPress={_handleTabSelect}
+            showHistory={showHistory}
+          />
+        )}
 
         <View style={{flex: 1}}>
-          <SearchBar
-            isShown={showSearchBar}
-            darkMode={darkMode}
-            placeholder={placeholder}
-            theme={primaryColor}
-            searchQuery={searchQuery}
-            handleSearch={(query) => setSearchQuery(query)}
-          />
+          {showSearchBar && (
+            <SearchBar
+              darkMode={darkMode}
+              placeholder={placeholder}
+              theme={primaryColor}
+              searchQuery={searchQuery}
+              handleSearch={(query) => setSearchQuery(query)}
+            />
+          )}
 
-          {!(isComponentReady && isEmojiPrerender)  ? (
+          {!(isEmojiPrerender)  ? (
             <Loading theme={primaryColor} {...others} />
           ) : (
             <Picker 
               pickerFlatListStyle={pickerFlatListStyle}
               contentContainerStyle={contentContainerStyle}
-              onEmojiSelected={handleEmojiSelect}
+              onEmojiSelected={_handleEmojiSelect}
+              onViewableItemsChanged={_handleViewableEmoji}
               colSize={colSize}
               data={emojiData}
               ref={scrollView}
@@ -205,7 +238,7 @@ const useComponentWidth = () => {
   const [width, setWidth] = useState(0);
   const onLayout = useCallback((event) => {
     setWidth(event.nativeEvent.layout.width);
-  });
+  },[]);
   return [width, onLayout];
 }
 

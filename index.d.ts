@@ -10,7 +10,6 @@ declare module "react-native-emoji-selector" {
    * same because the export is named the same.
    */
   export enum Categories {
-    all = "all",
     history = "history",
     emotion = "emotion",
     people = "people",

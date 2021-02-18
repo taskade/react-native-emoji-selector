@@ -19,7 +19,7 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#333333' : '#FFFFFF'}]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <Text style={{color: isDarkMode ? 'white' : 'black'}}>Please select the emoji you would like to use</Text>
       <View style={styles.display}>
         <Text style={{ fontSize: 64, backgroundColor: "transparent" }}>

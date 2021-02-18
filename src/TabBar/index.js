@@ -4,42 +4,52 @@ import {StyleSheet,Text, TouchableOpacity, View} from 'react-native';
 
 
 const TabBar = (props) => {
-  const { isShown, theme, activeCategory, onPress, width, darkMode, categoryKeys, categories } = props;
+  const {
+    theme,
+    activeCategory,
+    onPress,
+    width,
+    darkMode,
+    categoryKeys,
+    categories,
+    showHistory,
+  } = props;
   const tabSize = width / categoryKeys.length;
 
   const Tabs = categoryKeys.map(c => {
     const category = categories[c];
-    if (c !== "all") {
-      return (
-        <TouchableOpacity
-          key={category.name}
-          onPress={() => onPress(category)}
+    if (c === 'history' && !showHistory) {
+      return undefined;
+    }
+    return (
+      <TouchableOpacity
+        key={category.name}
+        onPress={() => onPress(c)}
+        style={{
+          flex: 1,
+          height: tabSize,
+          borderColor: category === activeCategory 
+          ? theme 
+          : darkMode ? "#8E8E93" : '#E5E5EA',
+          borderBottomWidth: 2,
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
+        <Text
           style={{
-            flex: 1,
-            height: tabSize,
-            borderColor: category === activeCategory 
-            ? theme 
-            : darkMode ? "#8E8E93" : '#E5E5EA',
-            borderBottomWidth: 2,
-            alignItems: "center",
-            justifyContent: "center"
+            textAlign: "center",
+            paddingBottom: 8,
+            fontSize: tabSize - 24
           }}
         >
-          <Text
-            style={{
-              textAlign: "center",
-              paddingBottom: 8,
-              fontSize: tabSize - 24
-            }}
-          >
-              {category.symbol}
-          </Text>
-        </TouchableOpacity>      
-      );
-    }
+            {category.symbol}
+        </Text>
+      </TouchableOpacity>      
+    );
   });
 
-  return isShown && (
+  return (
     <View style={styles.tabBar}>
       {Tabs}
     </View>
@@ -48,11 +58,11 @@ const TabBar = (props) => {
 
 TabBar.defaultProps = {
   isShown: true,
-  onPress: undefined,
+  onPress: () => {},
 }
 
 TabBar.propTypes = {
-  isShown: PropTypes.bool,
+  showHistory: PropTypes.bool,
   activeCategory: PropTypes.shape({
     "symbol": PropTypes.string,
     "name": PropTypes.string,

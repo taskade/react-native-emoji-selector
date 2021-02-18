@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, View, ViewPropTypes } from 'react-native';
 
 import { charFromEmojiObject } from '../helpers';
-import { EmojiCell, Header } from './components'
+import { EmojiCell, Header } from './components';
 
 const Picker = React.forwardRef((props, ref) => {
   const {
@@ -14,9 +14,17 @@ const Picker = React.forwardRef((props, ref) => {
     data,
     darkMode,
     theme,
+    onViewableItemsChanged,
   } = props;
   const {data: emojiList, stickyIndex} = data;
-  
+  const [ currentIndex, setCurrentIndex ] = useState(0);
+  const viewConfig = React.useRef({viewAreaCoveragePercentThreshold: 50});
+  const handleItemsChange = React.useRef(({viewableItems, changed}) => {
+    setCurrentIndex(viewableItems[0].index);
+  }, [])
+
+  onViewableItemsChanged(currentIndex);
+
   return (
     <FlatList 
       ref={ref}
@@ -27,6 +35,9 @@ const Picker = React.forwardRef((props, ref) => {
       keyExtractor={(item, index) => `${item.index}_${index}`}
       data={emojiList}
       stickyHeaderIndices={stickyIndex}
+      onViewableItemsChanged={handleItemsChange.current}
+      viewabilityConfig={viewConfig.current}
+      removeClippedSubviews
       renderItem={({item: {data: content, isHeader}}) => {
         return isHeader ? (
           <Header 
@@ -57,6 +68,10 @@ const Picker = React.forwardRef((props, ref) => {
 
 Picker.displayName = 'Picker';
 
+Picker.defaultProps = {
+  onViewableItemsChanged: () => {},
+}
+
 Picker.propTypes = {
   pickerFlatListStyle: ViewPropTypes.style,
   contentContainerStyle: ViewPropTypes.style,
@@ -65,6 +80,7 @@ Picker.propTypes = {
   colSize: PropTypes.number,
   data: PropTypes.object,
   onEmojiSelected: PropTypes.func.isRequired,
+  onViewableItemsChanged: PropTypes.func,
   darkMode: PropTypes.bool,
   theme: PropTypes.object,
 };

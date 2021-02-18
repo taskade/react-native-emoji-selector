@@ -3,8 +3,8 @@ import React from 'react';
 import { Platform, StyleSheet, TextInput, View } from 'react-native';
 
 const SearchBar = (props) => {
-  const { isShown, placeholder, theme, searchQuery, handleSearch, darkMode } = props;
-  return isShown && (
+  const { placeholder, theme, searchQuery, handleSearch, darkMode } = props;
+  return (
     <View style={styles.searchbar_container}>
       <TextInput
         style={[styles.search, (darkMode && styles.search_dark)]}
@@ -26,7 +26,6 @@ SearchBar.defaultProps = {
 }
 
 SearchBar.propTypes = {
-  isShown: PropTypes.bool,
   placeholder: PropTypes.string,
   handleSearch: PropTypes.func,
   searchQuery: PropTypes.string,
@@ -66,6 +65,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF87',
   },
 })
-
 
 export default SearchBar;
