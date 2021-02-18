@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { FlatList, StyleSheet, Text, View, ViewPropTypes } from 'react-native';
+import { FlatList, StyleSheet, View, ViewPropTypes } from 'react-native';
 
 import { charFromEmojiObject } from '../helpers';
-import { DARK_THEME, LIGHT_THEME } from '../themes';
 import { EmojiCell, Header } from './components'
 
 const Picker = React.forwardRef((props, ref) => {
@@ -17,7 +16,6 @@ const Picker = React.forwardRef((props, ref) => {
     theme,
   } = props;
   const {data: emojiList, stickyIndex} = data;
-  const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
   
   return (
     <FlatList 
@@ -32,8 +30,9 @@ const Picker = React.forwardRef((props, ref) => {
       renderItem={({item: {data: content, isHeader}}) => {
         return isHeader ? (
           <Header 
-            backgroundColor={theme.background ? theme.background : defaultTheme.background}
+            theme={theme}
             style={styles.sectionHeader}
+            darkMode={darkMode}
           >
             {content}
           </Header>
