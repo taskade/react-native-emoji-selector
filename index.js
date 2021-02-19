@@ -155,16 +155,18 @@ const EmojiSelector = (props) => {
     }
   }
 
-  const _handleViewableEmoji = (index) => {
+  const _handleViewableEmoji = (currentIndex) => {
     // only update at the emoji header
-    if (index % 2 === 0) {
-      const emojiList = emojiData.data.find(key => key.index === index);
+    if (currentIndex % 2 !== 0) {
+      currentIndex --;
+    }
+
+    const emojiList = emojiData.data.find(key => key.index === currentIndex);
       categoryKeys.forEach(key => {
         if (Categories[key].name === emojiList.data) {
           setCurrentCategory(Categories[key]);
         }
       })
-    }
     
   }
 

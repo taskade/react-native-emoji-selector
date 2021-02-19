@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect,useState } from 'react';
 import { FlatList, StyleSheet, View, ViewPropTypes } from 'react-native';
 
 import { charFromEmojiObject } from '../helpers';
@@ -23,7 +23,10 @@ const Picker = React.forwardRef((props, ref) => {
     setCurrentIndex(viewableItems[0].index);
   }, [])
 
-  onViewableItemsChanged(currentIndex);
+  useEffect(() => {
+    onViewableItemsChanged(currentIndex);
+    console.log(currentIndex)
+  },[currentIndex])
 
   return (
     <FlatList 
