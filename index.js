@@ -79,6 +79,7 @@ const EmojiSelector = (props) => {
     ...others
   } = props;
   const [searchQuery, setSearchQuery] = useState('');
+  // const [searchResults, setSearchResults] = useState(undefined);
   const [isEmojiPrerender, setEmojiPrerender] = useState(false);
   // const [isComponentReady, setComponentReady] = useState(false);
   const [history, setHistory] = useState([]);
@@ -86,6 +87,8 @@ const EmojiSelector = (props) => {
   const [currentCategory, setCurrentCategory] = useState(Categories.history);
   const [width, onLayout] = useComponentWidth();
   const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
+  const scrollView = useRef(null);
+
   const colSize = useMemo(() => {
     // setComponentReady(width !== 0);
     if (width === 0) {
@@ -93,8 +96,26 @@ const EmojiSelector = (props) => {
     }
     return Math.floor(width/columns);
   }, [width, columns]);
-  const scrollView = useRef(null);
-  
+
+  const searchResults = useMemo(() => {
+    console.log('results', searchQuery)
+    if (searchQuery === '') {
+      return undefined;
+    }
+    const filteredEmojis = sortEmoji(emoji.filter((e) => {
+      return e.short_names.some((name) => {
+        return name.includes(searchQuery.toLowerCase());
+      });
+    }));
+
+    return {
+      data: [
+        {data: "Search Results", index: 0, isHeader: true},
+        {data: filteredEmojis, index: 1, isHeader: false}
+      ],
+      stickyIndex: [0],
+  };
+  }, [searchQuery])
 
   useEffect(() => {
     const prerenderEmojis = async () => {
@@ -159,14 +180,16 @@ const EmojiSelector = (props) => {
     if (currentIndex % 2 !== 0) {
       currentIndex --;
     }
-
     const emojiList = emojiData.data.find(key => key.index === currentIndex);
       categoryKeys.forEach(key => {
         if (Categories[key].name === emojiList.data) {
           setCurrentCategory(Categories[key]);
         }
       })
-    
+  }
+
+  const _handleSearch = (text) => {
+    setSearchQuery(text);
   }
 
   const primaryColor = theme.primary ? theme.primary : defaultTheme.primary;
@@ -184,8 +207,9 @@ const EmojiSelector = (props) => {
             categoryKeys={categoryKeys}
             categories={Categories}
             reference={scrollView}
-            onPress={_handleTabSelect}
             showHistory={showHistory}
+            onPress={_handleTabSelect}
+            onPressIn={_handleSearch}
           />
         )}
 
@@ -196,7 +220,7 @@ const EmojiSelector = (props) => {
               placeholder={placeholder}
               theme={primaryColor}
               searchQuery={searchQuery}
-              handleSearch={(query) => setSearchQuery(query)}
+              handleSearch={_handleSearch}
             />
           )}
 
@@ -209,7 +233,7 @@ const EmojiSelector = (props) => {
               onEmojiSelected={_handleEmojiSelect}
               onViewableItemsChanged={_handleViewableEmoji}
               colSize={colSize}
-              data={emojiData}
+              data={searchResults ? searchResults : emojiData}
               ref={scrollView}
               darkMode={darkMode}
               theme={theme}

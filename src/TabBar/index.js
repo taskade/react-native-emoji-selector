@@ -8,6 +8,7 @@ const TabBar = (props) => {
     theme,
     activeCategory,
     onPress,
+    onPressIn,
     width,
     darkMode,
     categoryKeys,
@@ -25,6 +26,7 @@ const TabBar = (props) => {
       <TouchableOpacity
         key={category.name}
         onPress={() => onPress(c)}
+        onPressIn={() => onPressIn('')}
         style={{
           flex: 1,
           height: tabSize,
@@ -72,6 +74,7 @@ TabBar.propTypes = {
     PropTypes.object,
   ]),
   onPress: PropTypes.func,
+  onPressIn: PropTypes.func,
   width: PropTypes.number,
   darkMode: PropTypes.bool,
   categoryKeys: PropTypes.array,
