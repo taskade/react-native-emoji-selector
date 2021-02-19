@@ -140,7 +140,6 @@ const EmojiSelector = (props) => {
   }
 
   const _handleEmojiSelect = (emoji) => {
-    console.log(emoji)
     onEmojiSelected(charFromEmojiObject(emoji));
   }
 

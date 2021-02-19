@@ -20,12 +20,13 @@ const Picker = React.forwardRef((props, ref) => {
   const [ currentIndex, setCurrentIndex ] = useState(0);
   const viewConfig = React.useRef({viewAreaCoveragePercentThreshold: 50});
   const handleItemsChange = React.useRef(({viewableItems, changed}) => {
-    setCurrentIndex(viewableItems[0].index);
-  }, [])
-
+    if (viewableItems[0]) {
+      setCurrentIndex(viewableItems[0].index);
+    }
+  }, []);
+  
   useEffect(() => {
     onViewableItemsChanged(currentIndex);
-    console.log(currentIndex)
   },[currentIndex])
 
   return (
@@ -40,6 +41,7 @@ const Picker = React.forwardRef((props, ref) => {
       stickyHeaderIndices={stickyIndex}
       onViewableItemsChanged={handleItemsChange.current}
       viewabilityConfig={viewConfig.current}
+      onScrollToIndexFailed={()=>{}}
       removeClippedSubviews
       renderItem={({item: {data: content, isHeader}}) => {
         return isHeader ? (
