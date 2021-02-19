@@ -81,7 +81,7 @@ const EmojiSelector = (props) => {
   const [searchQuery, setSearchQuery] = useState('');
   // const [searchResults, setSearchResults] = useState(undefined);
   const [isEmojiPrerender, setEmojiPrerender] = useState(false);
-  // const [isComponentReady, setComponentReady] = useState(false);
+  const [isComponentReady, setComponentReady] = useState(false);
   const [history, setHistory] = useState([]);
   const [emojiData, setEmojiData] = useState({});
   const [currentCategory, setCurrentCategory] = useState(Categories.history);
@@ -90,7 +90,7 @@ const EmojiSelector = (props) => {
   const scrollView = useRef(null);
 
   const colSize = useMemo(() => {
-    // setComponentReady(width !== 0);
+    setComponentReady(width !== 0);
     if (width === 0) {
       return 0;
     }
@@ -98,7 +98,6 @@ const EmojiSelector = (props) => {
   }, [width, columns]);
 
   const searchResults = useMemo(() => {
-    console.log('results', searchQuery)
     if (searchQuery === '') {
       return undefined;
     }
@@ -129,6 +128,7 @@ const EmojiSelector = (props) => {
         setHistory(newHistory);
         emojiList.push({data: name, index: index, isHeader: true});
         emojiList.push({data: newHistory, index: index + 1, isHeader: false})
+        index += 2;
       }
 
       for (const key of categoryKeys) {
@@ -143,8 +143,8 @@ const EmojiSelector = (props) => {
             isHeader: false,
           })
           stickyIndex.push(index)
+          index += 2; 
         }
-        index += 2; 
       }
       setEmojiData({data: emojiList, stickyIndex: stickyIndex});
       setEmojiPrerender(true);
@@ -165,7 +165,7 @@ const EmojiSelector = (props) => {
   }
 
   const _handleTabSelect = (category) => {
-    if (isEmojiPrerender) {
+    if (isEmojiPrerender && showTabs) {
       const index = categoryKeys.findIndex(key => key === category);
       setCurrentCategory(Categories[category])
       scrollView.current.scrollToIndex({
@@ -181,11 +181,11 @@ const EmojiSelector = (props) => {
       currentIndex --;
     }
     const emojiList = emojiData.data.find(key => key.index === currentIndex);
-      categoryKeys.forEach(key => {
-        if (Categories[key].name === emojiList.data) {
-          setCurrentCategory(Categories[key]);
-        }
-      })
+    categoryKeys.forEach(key => {
+      if (Categories[key].name === emojiList.data) {
+        setCurrentCategory(Categories[key]);
+      }
+    })
   }
 
   const _handleSearch = (text) => {
@@ -224,7 +224,7 @@ const EmojiSelector = (props) => {
             />
           )}
 
-          {!(isEmojiPrerender)  ? (
+          {!(isEmojiPrerender && isComponentReady) ? (
             <Loading theme={primaryColor} {...others} />
           ) : (
             <Picker 

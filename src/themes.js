@@ -1,6 +1,6 @@
 export const LIGHT_THEME = {
   primary: '#007AFF',
-  background: '#FAFAFA',
+  background: '#FFFFFF',
   label: '#8F8F8F'
 }
 

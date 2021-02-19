@@ -1,6 +1,6 @@
 declare module "react-native-emoji-selector" {
   import * as React from "react";
-  import { ViewStyle } from "react-native";
+  import { ColorValue, ViewStyle } from "react-native";
 
   /**
    * Categories
@@ -24,7 +24,6 @@ declare module "react-native-emoji-selector" {
 
   export interface EmojiSelectorProps {
     onEmojiSelected(emoji: string): void;
-    theme?: string;
     placeholder?: string;
     showTabs?: boolean;
     showSearchBar?: boolean;
@@ -37,6 +36,11 @@ declare module "react-native-emoji-selector" {
     pickerStyle: ViewStyle;
     pickerFlatListStyle?: ViewStyle;
     contentContainerStyle?: ViewStyle;
+    theme?: {
+      primary?: ColorValue;
+      background?: ColorValue;
+      label?: ColorValue;
+    };
   }
 
   const EmojiSelector: React.ComponentType<EmojiSelectorProps>;
