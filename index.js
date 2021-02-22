@@ -1,69 +1,64 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import emoji from "emoji-datasource";
+import emoji from 'emoji-datasource';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
-  ViewPropTypes
-} from "react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, StyleSheet, View, ViewPropTypes } from 'react-native';
 
 import { Picker, SearchBar, TabBar } from './src';
 import { charFromEmojiObject } from './src/helpers';
-import { DARK_THEME,LIGHT_THEME } from './src/themes.js';
+import { DARK_THEME, LIGHT_THEME } from './src/themes.js';
 
 export const Categories = {
   history: {
-    symbol: "🕘",
-    name: "Recently Used"
+    symbol: '🕘',
+    name: 'Recently Used',
   },
   emotion: {
-    symbol: "😀",
-    name: "Smileys & Emotion"
+    symbol: '😀',
+    name: 'Smileys & Emotion',
   },
   people: {
-    symbol: "🧑",
-    name: "People & Body"
+    symbol: '🧑',
+    name: 'People & Body',
   },
   nature: {
-    symbol: "🦄",
-    name: "Animals & Nature"
+    symbol: '🦄',
+    name: 'Animals & Nature',
   },
   food: {
-    symbol: "🍔",
-    name: "Food & Drink"
+    symbol: '🍔',
+    name: 'Food & Drink',
   },
   activities: {
-    symbol: "⚾️",
-    name: "Activities"
+    symbol: '⚾️',
+    name: 'Activities',
   },
   places: {
-    symbol: "✈️",
-    name: "Travel & Places"
+    symbol: '✈️',
+    name: 'Travel & Places',
   },
   objects: {
-    symbol: "💡",
-    name: "Objects"
+    symbol: '💡',
+    name: 'Objects',
   },
   symbols: {
-    symbol: "🔣",
-    name: "Symbols"
+    symbol: '🔣',
+    name: 'Symbols',
   },
   flags: {
-    symbol: "🏳️‍🌈",
-    name: "Flags"
-  }
+    symbol: '🏳️‍🌈',
+    name: 'Flags',
+  },
 };
 
-const filteredEmojis = emoji.filter(e => !e["obsoleted_by"]);
-const emojiByCategory = (category) => filteredEmojis.filter(e => e.category === category)
+const filteredEmojis = emoji.filter((e) => !e['obsoleted_by']);
+const emojiByCategory = (category) => filteredEmojis.filter((e) => e.category === category);
 const sortEmoji = (list) => list.sort((a, b) => a.sort_order - b.sort_order);
 const categoryKeys = Object.keys(Categories);
-const storage_key = "@react-native-emoji-selector:HISTORY";
+const storage_key = '@react-native-emoji-selector:HISTORY';
 
 const EmojiSelector = (props) => {
-  const { 
+  const {
     columns,
     darkMode,
     placeholder,
@@ -94,40 +89,42 @@ const EmojiSelector = (props) => {
     if (width === 0) {
       return 0;
     }
-    return Math.floor(width/columns);
+    return Math.floor(width / columns);
   }, [width, columns]);
 
   const searchResults = useMemo(() => {
     if (searchQuery === '') {
       return undefined;
     }
-    const filteredEmojis = sortEmoji(emoji.filter((e) => {
-      return e.short_names.some((name) => {
-        return name.includes(searchQuery.toLowerCase());
-      });
-    }));
+    const emojiList = sortEmoji(
+      emoji.filter((e) => {
+        return e.short_names.some((name) => {
+          return name.includes(searchQuery.toLowerCase());
+        });
+      }),
+    );
 
     return {
       data: [
-        {data: "Search Results", index: 0, isHeader: true},
-        {data: filteredEmojis, index: 1, isHeader: false}
+        { data: 'Search Results', index: 0, isHeader: true },
+        { data: emojiList, index: 1, isHeader: false },
       ],
       stickyIndex: [0],
-  };
-  }, [searchQuery])
+    };
+  }, [searchQuery]);
 
   useEffect(() => {
     const prerenderEmojis = async () => {
       const emojiList = [];
-      const stickyIndex = []
+      const stickyIndex = [];
       let index = 0;
 
       if (showHistory) {
         const newHistory = await _loadHistoryAsync();
         const name = Categories['history'].name;
         setHistory(newHistory);
-        emojiList.push({data: name, index: index, isHeader: true});
-        emojiList.push({data: newHistory, index: index + 1, isHeader: false})
+        emojiList.push({ data: name, index: index, isHeader: true });
+        emojiList.push({ data: newHistory, index: index + 1, isHeader: false });
         index += 2;
       }
 
@@ -135,69 +132,71 @@ const EmojiSelector = (props) => {
         const name = Categories[key].name;
 
         if (key !== 'history') {
-          const emoji = sortEmoji(emojiByCategory(name));
-          emojiList.push({data: name, index: index, isHeader: true});
+          const emojiSort = sortEmoji(emojiByCategory(name));
+          emojiList.push({ data: name, index: index, isHeader: true });
           emojiList.push({
-            data: shouldInclude ? emoji.filter((e) => shouldInclude(e)) : emoji,
+            data: shouldInclude ? emojiSort.filter((e) => shouldInclude(e)) : emojiSort,
             index: index + 1,
             isHeader: false,
-          })
-          stickyIndex.push(index)
-          index += 2; 
+          });
+          stickyIndex.push(index);
+          index += 2;
         }
       }
-      setEmojiData({data: emojiList, stickyIndex: stickyIndex});
+      setEmojiData({ data: emojiList, stickyIndex: stickyIndex });
       setEmojiPrerender(true);
-    }
+    };
 
     prerenderEmojis();
-  },[]);
+  });
 
   const _loadHistoryAsync = async () => {
     const result = await AsyncStorage.getItem(storage_key);
     if (result) {
       return JSON.parse(result);
-    } 
-  }
+    }
+  };
 
-  const _handleEmojiSelect = (emoji) => {
-    onEmojiSelected(charFromEmojiObject(emoji));
-  }
+  const _handleEmojiSelect = (selectedEmoji) => {
+    onEmojiSelected(charFromEmojiObject(selectedEmoji));
+  };
 
   const _handleTabSelect = (category) => {
     if (isEmojiPrerender && showTabs) {
-      const index = categoryKeys.findIndex(key => key === category);
-      setCurrentCategory(Categories[category])
+      const index = categoryKeys.findIndex((key) => key === category);
+      setCurrentCategory(Categories[category]);
       scrollView.current.scrollToIndex({
         animated: true,
         index: index * 2,
       });
     }
-  }
+  };
 
-  const _handleViewableEmoji = (currentIndex) => {
+  const _handleViewableEmoji = (index) => {
     // only update at the emoji header
+    var currentIndex = index;
     if (currentIndex % 2 !== 0) {
-      currentIndex --;
+      currentIndex = index - 1;
     }
-    const emojiList = emojiData.data.find(key => key.index === currentIndex);
-    categoryKeys.forEach(key => {
+
+    const emojiList = emojiData.data.find((key) => key.index === currentIndex);
+    categoryKeys.forEach((key) => {
       if (Categories[key].name === emojiList.data) {
         setCurrentCategory(Categories[key]);
       }
-    })
-  }
+    });
+  };
 
   const _handleSearch = (text) => {
     setSearchQuery(text);
-  }
+  };
 
   const primaryColor = theme.primary ? theme.primary : defaultTheme.primary;
   const backgroundColor = theme.background ? theme.background : defaultTheme.background;
 
   return (
-    <View style={[styles.frame, {backgroundColor: backgroundColor}, pickerStyle]} {...others}>
-      <View style={{ flex : 1 }} onLayout={onLayout}>
+    <View style={[styles.frame, { backgroundColor: backgroundColor }, pickerStyle]} {...others}>
+      <View style={{ flex: 1 }} onLayout={onLayout}>
         {showTabs && (
           <TabBar
             activeCategory={currentCategory}
@@ -213,7 +212,7 @@ const EmojiSelector = (props) => {
           />
         )}
 
-        <View style={{flex: 1}}>
+        <View style={{ flex: 1 }}>
           {showSearchBar && (
             <SearchBar
               darkMode={darkMode}
@@ -227,7 +226,7 @@ const EmojiSelector = (props) => {
           {!(isEmojiPrerender && isComponentReady) ? (
             <Loading theme={primaryColor} {...others} />
           ) : (
-            <Picker 
+            <Picker
               pickerFlatListStyle={pickerFlatListStyle}
               contentContainerStyle={contentContainerStyle}
               onEmojiSelected={_handleEmojiSelect}
@@ -247,25 +246,22 @@ const EmojiSelector = (props) => {
 
 // Loading spinner as we load emoji
 const Loading = (props) => {
-  const {theme, ...others} = props;
+  const { theme, ...others } = props;
   return (
     <View style={styles.loader} {...others}>
-      <ActivityIndicator
-        size={"large"}
-        color={theme}
-      />
+      <ActivityIndicator size={'large'} color={theme} />
     </View>
-  )
-}
+  );
+};
 
 // Get width of container to calculate sizing of tabs
 const useComponentWidth = () => {
   const [width, setWidth] = useState(0);
   const onLayout = useCallback((event) => {
     setWidth(event.nativeEvent.layout.width);
-  },[]);
+  }, []);
   return [width, onLayout];
-}
+};
 
 EmojiSelector.defaultProps = {
   theme: {},
@@ -276,7 +272,7 @@ EmojiSelector.defaultProps = {
   showSectionTitles: true,
   darkMode: false,
   columns: 6,
-  placeholder: "Search",
+  placeholder: 'Search',
   contentContainerStyle: undefined,
   pickerStyle: undefined,
   pickerFlatListStyle: undefined,
@@ -300,28 +296,25 @@ EmojiSelector.propTypes = {
 };
 
 Loading.propTypes = {
-  theme: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-  ]),
-}
+  theme: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+};
 
 const styles = StyleSheet.create({
   frame: {
     flex: 1,
-    width: "100%"
+    width: '100%',
   },
   loader: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   sectionHeader: {
     margin: 8,
     fontSize: 17,
-    width: "100%",
-    color: "#8F8F8F"
-  }
+    width: '100%',
+    color: '#8F8F8F',
+  },
 });
 
 export default EmojiSelector;

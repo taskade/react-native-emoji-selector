@@ -7,38 +7,35 @@ const SearchBar = (props) => {
   return (
     <View style={styles.searchbar_container}>
       <TextInput
-        style={[styles.search, (darkMode && styles.search_dark)]}
-          placeholder={placeholder}
-          clearButtonMode="always"
-          returnKeyType="done"
-          autoCorrect={false}
-          underlineColorAndroid={theme}
-          value={searchQuery}
-          onChangeText={handleSearch}
-          placeholderTextColor={darkMode ? '#FFFFFF56' : '#00000056'}
+        style={[styles.search, darkMode && styles.search_dark]}
+        placeholder={placeholder}
+        clearButtonMode="always"
+        returnKeyType="done"
+        autoCorrect={false}
+        underlineColorAndroid={theme}
+        value={searchQuery}
+        onChangeText={handleSearch}
+        placeholderTextColor={darkMode ? '#FFFFFF56' : '#00000056'}
       />
     </View>
-  ) 
-}
+  );
+};
 
 SearchBar.defaultProps = {
   isShown: true,
-}
+};
 
 SearchBar.propTypes = {
   placeholder: PropTypes.string,
   handleSearch: PropTypes.func,
   searchQuery: PropTypes.string,
-  theme: PropTypes.oneOfType([
-    PropTypes.string,       
-    PropTypes.object,
-  ]),
+  theme: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   darkMode: PropTypes.bool,
 };
 
 const styles = StyleSheet.create({
   searchbar_container: {
-    width: "100%",
+    width: '100%',
     zIndex: 1,
   },
   search: {
@@ -51,10 +48,10 @@ const styles = StyleSheet.create({
       },
       android: {
         paddingBottom: 8,
-      }
+      },
     }),
     margin: 8,
-    color: '#00000087'
+    color: '#00000087',
   },
   search_dark: {
     ...Platform.select({
@@ -64,6 +61,6 @@ const styles = StyleSheet.create({
     }),
     color: '#FFFFFF87',
   },
-})
+});
 
 export default SearchBar;

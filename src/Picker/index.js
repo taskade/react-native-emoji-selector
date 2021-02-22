@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, View, ViewPropTypes } from 'react-native';
 
 import { charFromEmojiObject } from '../helpers';
@@ -16,21 +16,21 @@ const Picker = React.forwardRef((props, ref) => {
     theme,
     onViewableItemsChanged,
   } = props;
-  const {data: emojiList, stickyIndex} = data;
-  const [ currentIndex, setCurrentIndex ] = useState(0);
-  const viewConfig = React.useRef({viewAreaCoveragePercentThreshold: 50});
-  const handleItemsChange = React.useRef(({viewableItems, changed}) => {
+  const { data: emojiList, stickyIndex } = data;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const viewConfig = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
+  const handleItemsChange = React.useRef(({ viewableItems }) => {
     if (viewableItems[0]) {
       setCurrentIndex(viewableItems[0].index);
     }
   }, []);
-  
+
   useEffect(() => {
     onViewableItemsChanged(currentIndex);
-  },[currentIndex])
+  }, [currentIndex, onViewableItemsChanged]);
 
   return (
-    <FlatList 
+    <FlatList
       ref={ref}
       style={[{ flex: 1 }, pickerFlatListStyle]}
       contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
@@ -41,31 +41,25 @@ const Picker = React.forwardRef((props, ref) => {
       stickyHeaderIndices={stickyIndex}
       onViewableItemsChanged={handleItemsChange.current}
       viewabilityConfig={viewConfig.current}
-      onScrollToIndexFailed={()=>{}}
+      onScrollToIndexFailed={() => {}}
       removeClippedSubviews
-      renderItem={({item: {data: content, isHeader}}) => {
+      renderItem={({ item: { data: content, isHeader } }) => {
         return isHeader ? (
-          <Header 
-            theme={theme}
-            style={styles.sectionHeader}
-            darkMode={darkMode}
-          >
+          <Header theme={theme} style={styles.sectionHeader} darkMode={darkMode}>
             {content}
           </Header>
         ) : (
           <View style={styles.emojiContainer}>
-            {
-              content.map((emoji, i) => (
-                <EmojiCell
-                  key={i}
-                  onPress={()=>onEmojiSelected(emoji)}
-                  colSize={colSize}
-                  emoji={charFromEmojiObject(emoji)}
-                />
-              )
-            )}
+            {content.map((emoji, i) => (
+              <EmojiCell
+                key={i}
+                onPress={() => onEmojiSelected(emoji)}
+                colSize={colSize}
+                emoji={charFromEmojiObject(emoji)}
+              />
+            ))}
           </View>
-        )
+        );
       }}
     />
   );
@@ -75,12 +69,12 @@ Picker.displayName = 'Picker';
 
 Picker.defaultProps = {
   onViewableItemsChanged: () => {},
-}
+};
 
 Picker.propTypes = {
   pickerFlatListStyle: ViewPropTypes.style,
   contentContainerStyle: ViewPropTypes.style,
-  columns: PropTypes.number, 
+  columns: PropTypes.number,
   numColumns: PropTypes.number,
   colSize: PropTypes.number,
   data: PropTypes.object,
@@ -94,14 +88,14 @@ const styles = StyleSheet.create({
   sectionHeader: {
     margin: 8,
     fontSize: 16,
-    width: "100%",
-    color: "#8F8F8F"
+    width: '100%',
+    color: '#8F8F8F',
   },
   emojiContainer: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-  }
-})
+  },
+});
 
 export default Picker;
