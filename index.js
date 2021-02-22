@@ -148,13 +148,14 @@ const EmojiSelector = (props) => {
     };
 
     prerenderEmojis();
-  });
+  }, []);
 
   const _loadHistoryAsync = async () => {
     const result = await AsyncStorage.getItem(storage_key);
     if (result) {
       return JSON.parse(result);
     }
+    return [];
   };
 
   const _handleEmojiSelect = (selectedEmoji) => {
