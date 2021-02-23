@@ -4,14 +4,16 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
+    "dev": "mkdir -p src/emoji-selector && cp ../index.js src/emoji-selector && cp -r ../src src/emoji-selector",
+    "cleanup": "rm -rf node_modules src",
     "eject": "expo eject"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.13.3",
+    "emoji-datasource": "^6.0.0",
     "expo": "^40.0.1",
     "react": "^16.13.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
-    "react-native-emoji-selector": "file:../"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz"
   },
   "devDependencies": {
     "babel-preset-expo": "^8.0.0"

@@ -1,26 +1,23 @@
 {
-  "plugins": [
-    "prettier",
-    "react",
-    "react-native",
-    "react-hooks",
-    "simple-import-sort"
-  ],
-  "parser": "@babel/eslint-parser",
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
+  "extends": "plugin:@taskade/base",
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx",
+          ".android.js",
+          ".android.jsx",
+          ".android.ts",
+          ".android.tsx",
+          ".ios.js",
+          ".ios.jsx",
+          ".ios.ts",
+          ".ios.tsx"
+        ]
+      }
     }
-  },
-  "env": {
-    "react-native/react-native": true
-  },
-  "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended"
-  ],
-  "rules": {
-    "simple-import-sort/imports": "error",
-    "simple-import-sort/exports": "error"
   }
 }
