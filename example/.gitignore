@@ -7,4 +7,5 @@ npm-debug.*
 *.mobileprovision
 module.js
 package-lock.json
+src
 yarn.lock
