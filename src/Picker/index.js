@@ -48,6 +48,8 @@ const Picker = React.forwardRef((props, ref) => {
               onPress={() => onEmojiSelected(emoji)}
               colSize={colSize}
               emoji={charFromEmojiObject(emoji)}
+              darkMode={darkMode}
+              theme={theme}
             />
           ))}
         </View>
@@ -75,6 +77,11 @@ const Picker = React.forwardRef((props, ref) => {
     />
   );
 });
+
+Picker.defaultProps = {
+  theme: {},
+  darkMode: false,
+};
 
 Picker.propTypes = {
   pickerFlatListStyle: ViewPropTypes.style,
