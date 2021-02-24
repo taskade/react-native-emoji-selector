@@ -40,6 +40,7 @@ declare module 'react-native-emoji-selector' {
       primary?: ColorValue;
       background?: ColorValue;
       label?: ColorValue;
+      underlay?: ColorValue;
     };
   }
 
