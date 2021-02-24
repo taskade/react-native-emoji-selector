@@ -15,6 +15,7 @@ const Picker = React.forwardRef((props, ref) => {
     darkMode,
     theme,
     onViewableItemsChanged,
+    ...others
   } = props;
   const { data: emojiList, stickyIndex } = data;
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,6 +29,10 @@ const Picker = React.forwardRef((props, ref) => {
   useEffect(() => {
     onViewableItemsChanged(currentIndex);
   }, [currentIndex, onViewableItemsChanged]);
+
+  const _extractKey = useCallback((item, index) => {
+    return `${item.index}_${index}`;
+  }, []);
 
   const _renderItem = useCallback(
     ({ item: { data: content, isHeader } }) => {
@@ -58,7 +63,7 @@ const Picker = React.forwardRef((props, ref) => {
       contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
       horizontal={false}
       keyboardShouldPersistTaps={'always'}
-      keyExtractor={(item, index) => `${item.index}_${index}`}
+      keyExtractor={_extractKey}
       data={emojiList}
       stickyHeaderIndices={stickyIndex}
       onViewableItemsChanged={handleItemsChange.current}
@@ -66,6 +71,7 @@ const Picker = React.forwardRef((props, ref) => {
       onScrollToIndexFailed={() => {}}
       removeClippedSubviews
       renderItem={_renderItem}
+      {...others}
     />
   );
 });

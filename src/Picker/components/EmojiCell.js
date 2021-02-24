@@ -17,7 +17,7 @@ const EmojiCell = (props) => {
       }}
       {...other}
     >
-      <Text allowFontScaling={false} style={{ color: '#FFFFFF', fontSize: colSize - 12 }}>
+      <Text allowFontScaling={false} style={{ color: '#FFFFFF', fontSize: colSize - 24 }}>
         {emoji}
       </Text>
     </TouchableOpacity>

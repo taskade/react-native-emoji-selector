@@ -1,6 +1,6 @@
-declare module "react-native-emoji-selector" {
-  import * as React from "react";
-  import { ColorValue, ViewStyle } from "react-native";
+declare module 'react-native-emoji-selector' {
+  import * as React from 'react';
+  import { ColorValue, ViewStyle } from 'react-native';
 
   /**
    * Categories
@@ -10,16 +10,16 @@ declare module "react-native-emoji-selector" {
    * same because the export is named the same.
    */
   export enum Categories {
-    history = "history",
-    emotion = "emotion",
-    people = "people",
-    nature = "nature",
-    food = "food",
-    activities = "activities",
-    places = "places",
-    objects = "objects",
-    symbols = "symbols",
-    flag = "flag"
+    history = 'history',
+    emotion = 'emotion',
+    people = 'people',
+    nature = 'nature',
+    food = 'food',
+    activities = 'activities',
+    places = 'places',
+    objects = 'objects',
+    symbols = 'symbols',
+    flag = 'flag',
   }
 
   export interface EmojiSelectorProps {
@@ -31,7 +31,7 @@ declare module "react-native-emoji-selector" {
     showSectionTitles?: boolean;
     category?: Categories;
     columns?: number;
-    shouldInclude?: (e: any)=>boolean;
+    shouldInclude?: (e: any) => boolean;
     darkMode?: PropTypes.bool;
     pickerStyle: ViewStyle;
     pickerFlatListStyle?: ViewStyle;

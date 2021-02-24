@@ -71,6 +71,8 @@ const EmojiSelector = (props) => {
     contentContainerStyle,
     pickerStyle,
     pickerFlatListStyle,
+    showSectionTitles,
+    category,
     ...others
   } = props;
   const [searchQuery, setSearchQuery] = useState('');
@@ -196,7 +198,7 @@ const EmojiSelector = (props) => {
   const backgroundColor = theme.background ? theme.background : defaultTheme.background;
 
   return (
-    <View style={[styles.frame, { backgroundColor: backgroundColor }, pickerStyle]} {...others}>
+    <View style={[styles.frame, { backgroundColor: backgroundColor }, pickerStyle]}>
       <View style={{ flex: 1 }} onLayout={onLayout}>
         {showTabs && (
           <TabBar
@@ -237,6 +239,7 @@ const EmojiSelector = (props) => {
               ref={scrollView}
               darkMode={darkMode}
               theme={theme}
+              {...others}
             />
           )}
         </View>
