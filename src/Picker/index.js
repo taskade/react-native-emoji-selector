@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, View, ViewPropTypes } from 'react-native';
 
 import { charFromEmojiObject } from '../helpers';
@@ -29,6 +29,28 @@ const Picker = React.forwardRef((props, ref) => {
     onViewableItemsChanged(currentIndex);
   }, [currentIndex, onViewableItemsChanged]);
 
+  const _renderItem = useCallback(
+    ({ item: { data: content, isHeader } }) => {
+      return isHeader ? (
+        <Header theme={theme} style={styles.sectionHeader} darkMode={darkMode}>
+          {content}
+        </Header>
+      ) : (
+        <View style={styles.emojiContainer}>
+          {content.map((emoji, i) => (
+            <EmojiCell
+              key={i}
+              onPress={() => onEmojiSelected(emoji)}
+              colSize={colSize}
+              emoji={charFromEmojiObject(emoji)}
+            />
+          ))}
+        </View>
+      );
+    },
+    [theme, darkMode, colSize, onEmojiSelected],
+  );
+
   return (
     <FlatList
       ref={ref}
@@ -43,33 +65,10 @@ const Picker = React.forwardRef((props, ref) => {
       viewabilityConfig={viewConfig.current}
       onScrollToIndexFailed={() => {}}
       removeClippedSubviews
-      renderItem={({ item: { data: content, isHeader } }) => {
-        return isHeader ? (
-          <Header theme={theme} style={styles.sectionHeader} darkMode={darkMode}>
-            {content}
-          </Header>
-        ) : (
-          <View style={styles.emojiContainer}>
-            {content.map((emoji, i) => (
-              <EmojiCell
-                key={i}
-                onPress={() => onEmojiSelected(emoji)}
-                colSize={colSize}
-                emoji={charFromEmojiObject(emoji)}
-              />
-            ))}
-          </View>
-        );
-      }}
+      renderItem={_renderItem}
     />
   );
 });
-
-Picker.displayName = 'Picker';
-
-Picker.defaultProps = {
-  onViewableItemsChanged: () => {},
-};
 
 Picker.propTypes = {
   pickerFlatListStyle: ViewPropTypes.style,
