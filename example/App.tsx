@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Platform, SafeAreaView, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
-import EmojiSelector, { Categories } from './src/emoji-selector';
+import EmojiSelector from './src/emoji-selector';
 
 export default function App() {
-  const [emoji, setEmoji] = useState(' ');
+  const [emoji, setEmoji] = useState('');
   const isDarkMode = useColorScheme() === 'dark';
   const theme = {
     background: isDarkMode ? '#333333' : '#FFFFFF',
@@ -17,15 +17,14 @@ export default function App() {
         Please select the emoji you would like to use
       </Text>
       <View style={styles.display}>
-        <Text style={{ fontSize: 64, backgroundColor: 'transparent' }}>{emoji}</Text>
+        <Text style={{ fontSize: 48, backgroundColor: 'transparent' }}>{emoji}</Text>
       </View>
       <EmojiSelector
-        onEmojiSelected={(emoji) => setEmoji(emoji)}
+        onEmojiSelected={(emojiObj) => setEmoji(emojiObj)}
         showSearchBar={true}
         showTabs={true}
         showHistory={true}
         showSectionTitles={true}
-        category={Categories.all}
         darkMode={isDarkMode}
         theme={theme}
       />
@@ -46,8 +45,8 @@ const styles = StyleSheet.create({
     }),
   },
   display: {
-    width: 96,
-    height: 96,
+    width: 72,
+    height: 72,
     margin: 24,
     borderWidth: 2,
     borderRadius: 12,
