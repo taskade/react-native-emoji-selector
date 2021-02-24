@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, StyleSheet, View, ViewPropTypes } from 'react-native';
 
 import { charFromEmojiObject } from '../helpers';
@@ -15,6 +15,7 @@ const Picker = React.forwardRef((props, ref) => {
     darkMode,
     theme,
     onViewableItemsChanged,
+    ...others
   } = props;
   const { data: emojiList, stickyIndex } = data;
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -29,6 +30,32 @@ const Picker = React.forwardRef((props, ref) => {
     onViewableItemsChanged(currentIndex);
   }, [currentIndex, onViewableItemsChanged]);
 
+  const _extractKey = useCallback((item, index) => {
+    return `${item.index}_${index}`;
+  }, []);
+
+  const _renderItem = useCallback(
+    ({ item: { data: content, isHeader } }) => {
+      return isHeader ? (
+        <Header theme={theme} style={styles.sectionHeader} darkMode={darkMode}>
+          {content}
+        </Header>
+      ) : (
+        <View style={styles.emojiContainer}>
+          {content.map((emoji, i) => (
+            <EmojiCell
+              key={i}
+              onPress={() => onEmojiSelected(emoji)}
+              colSize={colSize}
+              emoji={charFromEmojiObject(emoji)}
+            />
+          ))}
+        </View>
+      );
+    },
+    [theme, darkMode, colSize, onEmojiSelected],
+  );
+
   return (
     <FlatList
       ref={ref}
@@ -36,40 +63,18 @@ const Picker = React.forwardRef((props, ref) => {
       contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
       horizontal={false}
       keyboardShouldPersistTaps={'always'}
-      keyExtractor={(item, index) => `${item.index}_${index}`}
+      keyExtractor={_extractKey}
       data={emojiList}
       stickyHeaderIndices={stickyIndex}
       onViewableItemsChanged={handleItemsChange.current}
       viewabilityConfig={viewConfig.current}
       onScrollToIndexFailed={() => {}}
       removeClippedSubviews
-      renderItem={({ item: { data: content, isHeader } }) => {
-        return isHeader ? (
-          <Header theme={theme} style={styles.sectionHeader} darkMode={darkMode}>
-            {content}
-          </Header>
-        ) : (
-          <View style={styles.emojiContainer}>
-            {content.map((emoji, i) => (
-              <EmojiCell
-                key={i}
-                onPress={() => onEmojiSelected(emoji)}
-                colSize={colSize}
-                emoji={charFromEmojiObject(emoji)}
-              />
-            ))}
-          </View>
-        );
-      }}
+      renderItem={_renderItem}
+      {...others}
     />
   );
 });
-
-Picker.displayName = 'Picker';
-
-Picker.defaultProps = {
-  onViewableItemsChanged: () => {},
-};
 
 Picker.propTypes = {
   pickerFlatListStyle: ViewPropTypes.style,
