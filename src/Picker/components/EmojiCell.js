@@ -5,7 +5,7 @@ import { StyleSheet, Text, TouchableHighlight } from 'react-native';
 import { DARK_THEME, LIGHT_THEME } from '../../themes';
 
 const EmojiCell = (props) => {
-  const { emoji, colSize, onPress, darkMode, theme, ...other } = props;
+  const { emoji, colSize, onPress, darkMode = false, theme = {}, ...other } = props;
   const DEFAULT_THEME = useMemo(() => (darkMode ? DARK_THEME : LIGHT_THEME), [darkMode]);
 
   const underlayColor = useMemo(() => {
@@ -34,11 +34,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 });
-
-EmojiCell.defaultProps = {
-  theme: {},
-  darkMode: false,
-};
 
 EmojiCell.propTypes = {
   emoji: PropTypes.string.isRequired,
