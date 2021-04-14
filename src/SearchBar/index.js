@@ -21,10 +21,6 @@ const SearchBar = (props) => {
   );
 };
 
-SearchBar.defaultProps = {
-  isShown: true,
-};
-
 SearchBar.propTypes = {
   placeholder: PropTypes.string,
   handleSearch: PropTypes.func,

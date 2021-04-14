@@ -5,9 +5,9 @@ import { StyleSheet, Text, View } from 'react-native';
 import { DARK_THEME, LIGHT_THEME } from '../../themes';
 
 const Header = (props) => {
-  const { children, theme, darkMode } = props;
+  const { children, theme = undefined, darkMode } = props;
   const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
-  const label = theme.label ? theme.label : defaultTheme.label;
+  const label = theme.label || defaultTheme.label;
   const background = theme.background ? theme.background : defaultTheme.background;
 
   return (
