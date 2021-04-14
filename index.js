@@ -235,6 +235,7 @@ const EmojiSelector = (props) => {
               onEmojiSelected={_handleEmojiSelect}
               onViewableItemsChanged={_handleViewableEmoji}
               colSize={colSize}
+              columns={columns}
               data={searchResults ? searchResults : emojiData}
               ref={scrollView}
               darkMode={darkMode}
