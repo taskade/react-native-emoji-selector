@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View, ViewPropTypes } from 'react-native';
+import { FlatList, StyleSheet, ViewPropTypes } from 'react-native';
 
-import { charFromEmojiObject } from '../helpers';
-import { EmojiCell, Header } from './components';
+import { EmojiSection, Header } from './components';
 
 const Picker = React.forwardRef((props, ref) => {
   const {
@@ -11,9 +10,10 @@ const Picker = React.forwardRef((props, ref) => {
     contentContainerStyle,
     onEmojiSelected,
     colSize,
+    columns = 6,
     data,
-    darkMode,
-    theme,
+    darkMode = false,
+    theme = {},
     onViewableItemsChanged,
     ...others
   } = props;
@@ -41,21 +41,17 @@ const Picker = React.forwardRef((props, ref) => {
           {content}
         </Header>
       ) : (
-        <View style={styles.emojiContainer}>
-          {content.map((emoji, i) => (
-            <EmojiCell
-              key={i}
-              onPress={() => onEmojiSelected(emoji)}
-              colSize={colSize}
-              emoji={charFromEmojiObject(emoji)}
-              darkMode={darkMode}
-              theme={theme}
-            />
-          ))}
-        </View>
+        <EmojiSection
+          colSize={colSize}
+          columns={columns}
+          data={content}
+          darkMode={darkMode}
+          onEmojiSelected={onEmojiSelected}
+          theme={theme}
+        />
       );
     },
-    [theme, darkMode, colSize, onEmojiSelected],
+    [theme, darkMode, colSize, columns, onEmojiSelected],
   );
 
   return (
@@ -64,7 +60,7 @@ const Picker = React.forwardRef((props, ref) => {
       style={[{ flex: 1 }, pickerFlatListStyle]}
       contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
       horizontal={false}
-      keyboardShouldPersistTaps={'always'}
+      keyboardShouldPersistTaps={'never'}
       keyExtractor={_extractKey}
       data={emojiList}
       stickyHeaderIndices={stickyIndex}
@@ -77,11 +73,6 @@ const Picker = React.forwardRef((props, ref) => {
     />
   );
 });
-
-Picker.defaultProps = {
-  theme: {},
-  darkMode: false,
-};
 
 Picker.propTypes = {
   pickerFlatListStyle: ViewPropTypes.style,
@@ -102,11 +93,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: '100%',
     color: '#8F8F8F',
-  },
-  emojiContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
   },
 });
 
