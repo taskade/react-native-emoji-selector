@@ -85,6 +85,11 @@ const EmojiSelector = (props) => {
   const [width, onLayout] = useComponentWidth();
   const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
   const scrollView = useRef(null);
+  const primaryColor = useMemo(() => theme.primary || defaultTheme.primary, [theme, defaultTheme]);
+  const backgroundColor = useMemo(() => theme.background || defaultTheme.background, [
+    theme,
+    defaultTheme,
+  ]);
 
   const colSize = useMemo(() => {
     setComponentReady(width !== 0);
@@ -160,42 +165,51 @@ const EmojiSelector = (props) => {
     return [];
   };
 
-  const _handleEmojiSelect = (selectedEmoji) => {
-    onEmojiSelected(charFromEmojiObject(selectedEmoji));
-  };
+  const _handleEmojiSelect = useCallback(
+    (selectedEmoji) => {
+      onEmojiSelected(charFromEmojiObject(selectedEmoji));
+    },
+    [onEmojiSelected],
+  );
 
-  const _handleTabSelect = (category) => {
-    if (isEmojiPrerender && showTabs) {
-      const index = categoryKeys.findIndex((key) => key === category);
-      setCurrentCategory(Categories[category]);
-      scrollView.current.scrollToIndex({
-        animated: true,
-        index: index * 2,
-      });
-    }
-  };
-
-  const _handleViewableEmoji = (index) => {
-    // only update at the emoji header
-    var currentIndex = index;
-    if (currentIndex % 2 !== 0) {
-      currentIndex = index - 1;
-    }
-
-    const emojiList = emojiData.data.find((key) => key.index === currentIndex);
-    categoryKeys.forEach((key) => {
-      if (Categories[key].name === emojiList.data) {
-        setCurrentCategory(Categories[key]);
+  const _handleTabSelect = useCallback(
+    (cat) => {
+      if (isEmojiPrerender && showTabs) {
+        const index = categoryKeys.findIndex((key) => key === cat);
+        setCurrentCategory(Categories[cat]);
+        scrollView.current.scrollToIndex({
+          animated: true,
+          index: index * 2,
+        });
       }
-    });
-  };
+    },
+    [isEmojiPrerender, showTabs],
+  );
 
-  const _handleSearch = (text) => {
-    setSearchQuery(text);
-  };
+  const _handleViewableEmoji = useCallback(
+    (index) => {
+      // only update at the emoji header
+      var currentIndex = index;
+      if (currentIndex % 2 !== 0) {
+        currentIndex = index - 1;
+      }
 
-  const primaryColor = theme.primary ? theme.primary : defaultTheme.primary;
-  const backgroundColor = theme.background ? theme.background : defaultTheme.background;
+      const emojiList = emojiData.data.find((key) => key.index === currentIndex);
+      categoryKeys.forEach((key) => {
+        if (Categories[key].name === emojiList.data) {
+          setCurrentCategory(Categories[key]);
+        }
+      });
+    },
+    [emojiData.data],
+  );
+
+  const _handleSearch = useCallback(
+    (text) => {
+      setSearchQuery(text);
+    },
+    [setSearchQuery],
+  );
 
   return (
     <View style={[styles.frame, { backgroundColor: backgroundColor }, pickerStyle]}>

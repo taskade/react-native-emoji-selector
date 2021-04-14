@@ -32,6 +32,7 @@ const EmojiSection = (props) => {
       renderItem={renderItem}
       data={data}
       numColumns={columns}
+      removeClippedSubviews={true}
     />
   );
 };
