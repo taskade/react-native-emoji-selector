@@ -2,7 +2,7 @@ export const LIGHT_THEME = {
   primary: '#007AFF',
   background: '#FFFFFF',
   label: '#8F8F8F',
-  underlay: '#DDDDDD',
+  underlay: '#F0F0F0',
 };
 
 export const DARK_THEME = {
