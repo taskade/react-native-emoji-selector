@@ -59,20 +59,20 @@ const storage_key = '@react-native-emoji-selector:HISTORY';
 
 const EmojiSelector = (props) => {
   const {
-    columns,
-    darkMode,
-    placeholder,
-    showTabs,
-    showSearchBar,
-    showHistory,
-    shouldInclude,
+    theme = {},
+    columns = 6,
+    category = Categories.all,
+    placeholder = 'Search',
+    darkMode = false,
+    showTabs = true,
+    showSearchBar = true,
+    showHistory = true,
+    shouldInclude = undefined,
+    showSectionTitles = true,
     onEmojiSelected,
-    theme,
-    contentContainerStyle,
-    pickerStyle,
-    pickerFlatListStyle,
-    showSectionTitles,
-    category,
+    contentContainerStyle = undefined,
+    pickerStyle = undefined,
+    pickerFlatListStyle = undefined,
     ...others
   } = props;
   const [searchQuery, setSearchQuery] = useState('');
@@ -281,21 +281,6 @@ const useComponentWidth = () => {
     setWidth(event.nativeEvent.layout.width);
   }, []);
   return [width, onLayout];
-};
-
-EmojiSelector.defaultProps = {
-  theme: {},
-  category: Categories.all,
-  showTabs: true,
-  showSearchBar: true,
-  showHistory: false,
-  showSectionTitles: true,
-  darkMode: false,
-  columns: 6,
-  placeholder: 'Search',
-  contentContainerStyle: undefined,
-  pickerStyle: undefined,
-  pickerFlatListStyle: undefined,
 };
 
 EmojiSelector.propTypes = {
