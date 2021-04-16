@@ -155,7 +155,7 @@ const EmojiSelector = (props) => {
     };
 
     prerenderEmojis();
-  }, []);
+  }, [showHistory, shouldInclude]);
 
   const _loadHistoryAsync = async () => {
     const result = await AsyncStorage.getItem(storage_key);
@@ -175,7 +175,8 @@ const EmojiSelector = (props) => {
   const _handleTabSelect = useCallback(
     (cat) => {
       if (isEmojiPrerender && showTabs) {
-        const index = categoryKeys.findIndex((key) => key === cat);
+        const updatedCategoryKeys = showHistory ? categoryKeys : categoryKeys.slice(1, -1);
+        const index = updatedCategoryKeys.findIndex((key) => key === cat);
         setCurrentCategory(Categories[cat]);
         scrollView.current.scrollToIndex({
           animated: true,
@@ -183,7 +184,7 @@ const EmojiSelector = (props) => {
         });
       }
     },
-    [isEmojiPrerender, showTabs],
+    [isEmojiPrerender, showTabs, showHistory],
   );
 
   const _handleViewableEmoji = useCallback(
@@ -201,7 +202,7 @@ const EmojiSelector = (props) => {
         }
       });
     },
-    [emojiData.data],
+    [emojiData],
   );
 
   const _handleSearch = useCallback(
