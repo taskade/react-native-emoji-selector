@@ -32,7 +32,7 @@ declare module 'react-native-emoji-selector' {
     category?: Categories;
     columns?: number;
     shouldInclude?: (e: any) => boolean;
-    darkMode?: PropTypes.bool;
+    darkMode?: boolean;
     pickerStyle: ViewStyle;
     pickerFlatListStyle?: ViewStyle;
     contentContainerStyle?: ViewStyle;
