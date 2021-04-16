@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, TouchableHighlight } from 'react-native';
+import { Text, TouchableHighlight } from 'react-native';
 
 import { DARK_THEME, LIGHT_THEME } from '../../themes';
+import styles from './styles';
 
 const EmojiCell = (props) => {
   const { emoji, colSize, onPress, darkMode = false, theme = {}, ...other } = props;
@@ -17,7 +18,7 @@ const EmojiCell = (props) => {
       activeOpacity={1}
       underlayColor={underlayColor}
       onPress={onPress}
-      style={[styles.touchable, { width: colSize, height: colSize }]}
+      style={[styles.emojiCell, { width: colSize, height: colSize }]}
       {...other}
     >
       <Text allowFontScaling={false} style={{ color: '#FFFFFF', fontSize: colSize - 30 }}>
@@ -26,14 +27,6 @@ const EmojiCell = (props) => {
     </TouchableHighlight>
   );
 };
-
-const styles = StyleSheet.create({
-  touchable: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-  },
-});
 
 EmojiCell.propTypes = {
   emoji: PropTypes.string.isRequired,

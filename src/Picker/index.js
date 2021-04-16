@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, StyleSheet, ViewPropTypes } from 'react-native';
+import { FlatList, ViewPropTypes } from 'react-native';
 
 import { EmojiSection, Header } from './components';
 
@@ -37,7 +37,7 @@ const Picker = React.forwardRef((props, ref) => {
   const _renderItem = useCallback(
     ({ item: { data: content, isHeader } }) => {
       return isHeader ? (
-        <Header theme={theme} style={styles.sectionHeader} darkMode={darkMode}>
+        <Header theme={theme} darkMode={darkMode}>
           {content}
         </Header>
       ) : (
@@ -86,14 +86,5 @@ Picker.propTypes = {
   darkMode: PropTypes.bool,
   theme: PropTypes.object,
 };
-
-const styles = StyleSheet.create({
-  sectionHeader: {
-    margin: 8,
-    fontSize: 16,
-    width: '100%',
-    color: '#8F8F8F',
-  },
-});
 
 export default Picker;
