@@ -1,9 +1,12 @@
 import PropTypes from 'prop-types';
-import React, { useCallback } from 'react';
-import { FlatList, StyleSheet, Text, View, ViewPropTypes } from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import { FlatList, Text, View } from 'react-native';
 
 import { charFromEmojiObject } from '../../helpers';
 import EmojiCell from './EmojiCell';
+import styles from './styles';
+
+const EmojiNotFound = ['🤔', '🕵️‍♀️', '🙈'];
 
 const EmojiSection = (props) => {
   const { colSize, data, onEmojiSelected, darkMode = false, theme, columns } = props;
@@ -22,9 +25,18 @@ const EmojiSection = (props) => {
     [colSize, darkMode, theme, onEmojiSelected],
   );
 
+  const getRandomEmoji = useMemo(() => {
+    return EmojiNotFound[Math.floor(Math.random() * EmojiNotFound.length)];
+  }, []);
+
   const extractKey = useCallback((item, index) => index, []);
 
-  return (
+  return data.length === 0 ? (
+    <View style={styles.noEmojiContainer}>
+      <Text style={styles.emojiWarn}>{getRandomEmoji}</Text>
+      <Text style={[styles.warningText, darkMode && styles.warningTextDark]}>No Emoji Found</Text>
+    </View>
+  ) : (
     <FlatList
       horizontal={false}
       contentContainerStyle={styles.emojiContainer}
@@ -45,11 +57,5 @@ EmojiSection.propTypes = {
   darkMode: PropTypes.bool,
   theme: PropTypes.object.isRequired,
 };
-
-const styles = StyleSheet.create({
-  emojiContainer: {
-    flex: 1,
-  },
-});
 
 export default EmojiSection;
