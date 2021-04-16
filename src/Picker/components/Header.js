@@ -1,8 +1,9 @@
 import PropsTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { DARK_THEME, LIGHT_THEME } from '../../themes';
+import styles from './styles';
 
 const Header = (props) => {
   const { children, theme = undefined, darkMode } = props;
@@ -11,7 +12,7 @@ const Header = (props) => {
   const background = theme.background ? theme.background : defaultTheme.background;
 
   return (
-    <View style={[styles.container, { backgroundColor: background }]}>
+    <View style={[styles.headerContainer, { backgroundColor: background }]}>
       <Text style={[styles.headerText, { color: label }]}>{children}</Text>
     </View>
   );
@@ -22,16 +23,5 @@ Header.propTypes = {
   darkMode: PropsTypes.bool,
   theme: PropsTypes.object,
 };
-
-const styles = StyleSheet.create({
-  headerText: {
-    margin: 8,
-    fontSize: 16,
-    width: '100%',
-  },
-  container: {
-    paddingVertical: 4,
-  },
-});
 
 export default Header;
