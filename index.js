@@ -90,6 +90,8 @@ const EmojiSelector = (props) => {
     theme,
     defaultTheme,
   ]);
+  const isSearching = useMemo(() => searchQuery !== '', [searchQuery]);
+  console.log(isSearching);
 
   const colSize = useMemo(() => {
     setComponentReady(width !== 0);
@@ -207,6 +209,7 @@ const EmojiSelector = (props) => {
 
   const _handleSearch = useCallback(
     (text) => {
+      console.log('handle', text);
       setSearchQuery(text);
     },
     [setSearchQuery],
@@ -215,21 +218,6 @@ const EmojiSelector = (props) => {
   return (
     <View style={[styles.frame, { backgroundColor: backgroundColor }, pickerStyle]}>
       <View style={{ flex: 1 }} onLayout={onLayout}>
-        {showTabs && (
-          <TabBar
-            activeCategory={currentCategory}
-            darkMode={darkMode}
-            theme={primaryColor}
-            width={width}
-            categoryKeys={categoryKeys}
-            categories={Categories}
-            reference={scrollView}
-            showHistory={showHistory}
-            onPress={_handleTabSelect}
-            onPressIn={_handleSearch}
-          />
-        )}
-
         <View style={{ flex: 1 }}>
           {showSearchBar && (
             <SearchBar
@@ -241,6 +229,23 @@ const EmojiSelector = (props) => {
             />
           )}
 
+          {showTabs && (
+            <TabBar
+              activeCategory={currentCategory}
+              darkMode={darkMode}
+              theme={primaryColor}
+              width={width}
+              categoryKeys={categoryKeys}
+              categories={Categories}
+              reference={scrollView}
+              showHistory={showHistory}
+              onPress={_handleTabSelect}
+              onPressIn={_handleSearch}
+            />
+          )}
+
+          {console.log(searchQuery)}
+
           {!(isEmojiPrerender && isComponentReady) ? (
             <Loading theme={primaryColor} {...others} />
           ) : (
@@ -251,7 +256,7 @@ const EmojiSelector = (props) => {
               onViewableItemsChanged={_handleViewableEmoji}
               colSize={colSize}
               columns={columns}
-              data={searchResults ? searchResults : emojiData}
+              data={isSearching ? searchResults : emojiData}
               ref={scrollView}
               darkMode={darkMode}
               theme={theme}
