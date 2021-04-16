@@ -91,7 +91,6 @@ const EmojiSelector = (props) => {
     defaultTheme,
   ]);
   const isSearching = useMemo(() => searchQuery !== '', [searchQuery]);
-  console.log(isSearching);
 
   const colSize = useMemo(() => {
     setComponentReady(width !== 0);
@@ -209,7 +208,6 @@ const EmojiSelector = (props) => {
 
   const _handleSearch = useCallback(
     (text) => {
-      console.log('handle', text);
       setSearchQuery(text);
     },
     [setSearchQuery],
@@ -243,8 +241,6 @@ const EmojiSelector = (props) => {
               onPressIn={_handleSearch}
             />
           )}
-
-          {console.log(searchQuery)}
 
           {!(isEmojiPrerender && isComponentReady) ? (
             <Loading theme={primaryColor} {...others} />
