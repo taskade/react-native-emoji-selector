@@ -12,6 +12,22 @@ export default StyleSheet.create({
     // backgroundColor: 'pink',
   },
 
+  headerContainer: {
+    paddingVertical: 4,
+  },
+
+  headerText: {
+    margin: 8,
+    fontSize: 16,
+    width: '100%',
+  },
+
+  emojiCell: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8,
+  },
+
   emojiWarn: {
     textAlign: 'center',
     fontSize: 64,
