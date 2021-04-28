@@ -22,6 +22,8 @@ export default StyleSheet.create({
   search: {
     paddingLeft: 8,
     color: '#00000087',
+    borderRadius: 10,
+
     ...Platform.select({
       ios: {
         backgroundColor: '#F2F2F7',
@@ -29,30 +31,14 @@ export default StyleSheet.create({
         borderRadius: 10,
       },
       android: {
-        width: '90%',
+        width: '100%',
         height: '100%',
       },
     }),
   },
 
-  search_dark: {
+  searchDark: {
     backgroundColor: '#48484A',
     color: '#FFFFFF87',
-  },
-
-  searchDarkAndroid: {
-    color: '#FFFFFF87',
-  },
-
-  closeButtonContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 5,
-  },
-
-  closeButton: {
-    height: 16,
-    width: 16,
-    tintColor: '#c7c7c7',
-  },
+  }
 });
