@@ -13,7 +13,9 @@ const Header = (props) => {
 
   return (
     <View style={[styles.headerContainer, { backgroundColor: background }]}>
-      <Text style={[styles.headerText, { color: label }]}>{children}</Text>
+      <Text allowFontScaling={false} style={[styles.headerText, { color: label }]}>
+        {children}
+      </Text>
     </View>
   );
 };
@@ -24,4 +26,4 @@ Header.propTypes = {
   theme: PropsTypes.object,
 };
 
-export default Header;
+export default React.memo(Header);

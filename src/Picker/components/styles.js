@@ -3,17 +3,18 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   emojiContainer: {
     flex: 1,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
   },
 
   noEmojiContainer: {
     flex: 1,
     paddingTop: 16,
     justifyContent: 'center',
-    // backgroundColor: 'pink',
   },
 
   headerContainer: {
-    paddingVertical: 4,
+    height: 40,
   },
 
   headerText: {
