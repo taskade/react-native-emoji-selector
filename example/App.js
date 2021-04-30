@@ -46,8 +46,8 @@ const styles = StyleSheet.create({
     }),
   },
   display: {
-    width: 96,
-    height: 96,
+    width: 72,
+    height: 72,
     margin: 24,
     borderWidth: 2,
     borderRadius: 12,

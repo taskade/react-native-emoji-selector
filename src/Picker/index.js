@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, ViewPropTypes } from 'react-native';
 
-import { EmojiSection, Header } from './components';
+import { EmojiRow, Header } from './components';
 
 const Picker = React.forwardRef((props, ref) => {
   const {
@@ -26,22 +26,21 @@ const Picker = React.forwardRef((props, ref) => {
     }
   }, []);
 
-  useEffect(() => {
-    onViewableItemsChanged(currentIndex);
-  }, [currentIndex, onViewableItemsChanged]);
-
+  // useEffect(() => {
+  //   onViewableItemsChanged(currentIndex);
+  // }, [currentIndex, onViewableItemsChanged]);
   const _extractKey = useCallback((item, index) => {
     return `${item.index}_${index}`;
   }, []);
 
   const _renderItem = useCallback(
-    ({ item: { data: content, isHeader } }) => {
-      return isHeader ? (
+    ({ item: { data: content, isHeader } }) =>
+      isHeader ? (
         <Header theme={theme} darkMode={darkMode}>
           {content}
         </Header>
       ) : (
-        <EmojiSection
+        <EmojiRow
           colSize={colSize}
           columns={columns}
           data={content}
@@ -49,9 +48,23 @@ const Picker = React.forwardRef((props, ref) => {
           onEmojiSelected={onEmojiSelected}
           theme={theme}
         />
-      );
-    },
+      ),
     [theme, darkMode, colSize, columns, onEmojiSelected],
+  );
+
+  const getItemLayout = useCallback(
+    (item, index) => {
+      const HEADER_HEIGHT = 40;
+      const ROW_HEIGHT = colSize;
+      const row = item[index];
+      const numOfSectionsBefore = row.isHeader ? row.sectionIndex : row.sectionIndex + 1;
+      return {
+        length: row.isHeader ? HEADER_HEIGHT : ROW_HEIGHT,
+        offset: ROW_HEIGHT * (index - numOfSectionsBefore) + HEADER_HEIGHT * numOfSectionsBefore,
+        index,
+      };
+    },
+    [colSize],
   );
 
   return (
@@ -60,15 +73,16 @@ const Picker = React.forwardRef((props, ref) => {
       style={[{ flex: 1 }, pickerFlatListStyle]}
       contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
       horizontal={false}
-      keyboardShouldPersistTaps={'never'}
+      keyboardShouldPersistTaps={'handled'}
       keyExtractor={_extractKey}
       data={emojiList}
       stickyHeaderIndices={stickyIndex}
-      onViewableItemsChanged={handleItemsChange.current}
-      viewabilityConfig={viewConfig.current}
+      // onViewableItemsChanged={handleItemsChange.current}
+      // viewabilityConfig={viewConfig.current}
       onScrollToIndexFailed={() => {}}
-      removeClippedSubviews
       renderItem={_renderItem}
+      getItemLayout={getItemLayout}
+      initialNumToRender={20}
       {...others}
     />
   );

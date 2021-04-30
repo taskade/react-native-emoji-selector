@@ -56,6 +56,13 @@ const emojiByCategory = (category) => filteredEmojis.filter((e) => e.category ==
 const sortEmoji = (list) => list.sort((a, b) => a.sort_order - b.sort_order);
 const categoryKeys = Object.keys(Categories);
 const storage_key = '@react-native-emoji-selector:HISTORY';
+const sliceEmojiToRows = (array, size) => {
+  let slicedArray = [];
+  for (let i = 0; i < array.length; i += size) {
+    slicedArray.push(array.slice(i, i + size));
+  }
+  return slicedArray;
+};
 
 const EmojiSelector = (props) => {
   const {
@@ -80,6 +87,7 @@ const EmojiSelector = (props) => {
   const [isEmojiPrerender, setEmojiPrerender] = useState(false);
   const [isComponentReady, setComponentReady] = useState(false);
   const [history, setHistory] = useState([]);
+  const [tabIndex, setTabIndex] = useState({});
   const [emojiData, setEmojiData] = useState({});
   const [currentCategory, setCurrentCategory] = useState(Categories.history);
   const [width, onLayout] = useComponentWidth();
@@ -104,6 +112,11 @@ const EmojiSelector = (props) => {
     if (searchQuery === '') {
       return undefined;
     }
+    const data = [];
+    let index = 0;
+    data.push({ data: 'Search Results', sectionIndex: 0, index: 0, isHeader: true });
+    index++;
+
     const emojiList = sortEmoji(
       emoji.filter((e) => {
         return e.short_names.some((name) => {
@@ -112,51 +125,87 @@ const EmojiSelector = (props) => {
       }),
     );
 
+    if (emojiList.length === 0) {
+      data.push({ data: [], index: index, sectionIndex: 0, isHeader: false });
+    } else {
+      sliceEmojiToRows(emojiList, columns).map((emojiRow) => {
+        data.push({
+          data: emojiRow,
+          index: index,
+          sectionIndex: 0,
+          isHeader: false,
+        });
+        index++;
+      });
+    }
     return {
-      data: [
-        { data: 'Search Results', index: 0, isHeader: true },
-        { data: emojiList, index: 1, isHeader: false },
-      ],
+      data,
       stickyIndex: [0],
     };
-  }, [searchQuery]);
+  }, [searchQuery, columns]);
 
   useEffect(() => {
     const prerenderEmojis = async () => {
       const emojiList = [];
       const stickyIndex = [];
+      const stickyToIndex = {};
       let index = 0;
+      let sectionIndex = 0;
 
       if (showHistory) {
         const newHistory = await _loadHistoryAsync();
-        const name = Categories['history'].name;
         setHistory(newHistory);
-        emojiList.push({ data: name, index: index, isHeader: true });
-        emojiList.push({ data: newHistory, index: index + 1, isHeader: false });
-        index += 2;
+
+        const name = Categories['history'].name;
+        emojiList.push({ data: name, index: index, sectionIndex, isHeader: true });
+        stickyIndex.push(index);
+        stickyToIndex['history'] = index;
+        index++;
+        sectionIndex++;
+
+        sliceEmojiToRows(newHistory, columns).map((emojiRow) => {
+          emojiList.push({
+            data: emojiRow,
+            index: index,
+            sectionIndex,
+            isHeader: false,
+          });
+          index++;
+        });
       }
 
       for (const key of categoryKeys) {
-        const name = Categories[key].name;
-
         if (key !== 'history') {
+          const name = Categories[key].name;
           const emojiSort = sortEmoji(emojiByCategory(name));
-          emojiList.push({ data: name, index: index, isHeader: true });
-          emojiList.push({
-            data: shouldInclude ? emojiSort.filter((e) => shouldInclude(e)) : emojiSort,
-            index: index + 1,
-            isHeader: false,
-          });
+          const emojiIncluded = shouldInclude
+            ? emojiSort.filter((e) => shouldInclude(e))
+            : emojiSort;
+
+          emojiList.push({ data: name, index: index, sectionIndex, isHeader: true });
           stickyIndex.push(index);
-          index += 2;
+          stickyToIndex[key] = index;
+          index++;
+          sectionIndex++;
+
+          sliceEmojiToRows(emojiIncluded, columns).map((emojiRow) => {
+            emojiList.push({
+              data: emojiRow,
+              index: index,
+              sectionIndex,
+              isHeader: false,
+            });
+            index++;
+          });
         }
       }
       setEmojiData({ data: emojiList, stickyIndex: stickyIndex });
+      setTabIndex(stickyToIndex);
       setEmojiPrerender(true);
     };
 
     prerenderEmojis();
-  }, [showHistory, shouldInclude]);
+  }, [showHistory, shouldInclude, columns]);
 
   const _loadHistoryAsync = async () => {
     const result = await AsyncStorage.getItem(storage_key);
@@ -176,16 +225,14 @@ const EmojiSelector = (props) => {
   const _handleTabSelect = useCallback(
     (cat) => {
       if (isEmojiPrerender && showTabs) {
-        const updatedCategoryKeys = showHistory ? categoryKeys : categoryKeys.slice(1, -1);
-        const index = updatedCategoryKeys.findIndex((key) => key === cat);
         setCurrentCategory(Categories[cat]);
         scrollView.current.scrollToIndex({
           animated: true,
-          index: index * 2,
+          index: tabIndex[cat],
         });
       }
     },
-    [isEmojiPrerender, showTabs, showHistory],
+    [isEmojiPrerender, showTabs, tabIndex],
   );
 
   const _handleViewableEmoji = useCallback(
@@ -265,7 +312,7 @@ const EmojiSelector = (props) => {
   );
 };
 
-// Loading spinner as we load emoji
+// Loading spinner as emoji is being loaded
 const Loading = (props) => {
   const { theme, ...others } = props;
   return (
