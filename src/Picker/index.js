@@ -26,9 +26,10 @@ const Picker = React.forwardRef((props, ref) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   onViewableItemsChanged(currentIndex);
-  // }, [currentIndex, onViewableItemsChanged]);
+  useEffect(() => {
+    onViewableItemsChanged(currentIndex);
+  }, [currentIndex, onViewableItemsChanged]);
+
   const _extractKey = useCallback((item, index) => {
     return `${item.index}_${index}`;
   }, []);
@@ -77,8 +78,8 @@ const Picker = React.forwardRef((props, ref) => {
       keyExtractor={_extractKey}
       data={emojiList}
       stickyHeaderIndices={stickyIndex}
-      // onViewableItemsChanged={handleItemsChange.current}
-      // viewabilityConfig={viewConfig.current}
+      onViewableItemsChanged={handleItemsChange.current}
+      viewabilityConfig={viewConfig.current}
       onScrollToIndexFailed={() => {}}
       renderItem={_renderItem}
       getItemLayout={getItemLayout}
