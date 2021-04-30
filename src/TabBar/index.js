@@ -12,31 +12,21 @@ const TabBar = (props) => {
     darkMode,
     categoryKeys,
     categories,
-    showHistory,
   } = props;
-
-  const updatedCategoryKeys = useMemo(() => {
-    return categoryKeys.filter((key) => {
-      if (key === 'history' && !showHistory) {
-        return false;
-      }
-      return true;
-    });
-  }, [categoryKeys, showHistory]);
 
   const tabSize = useMemo(() => {
     if (width === 0) {
       return 15;
     }
-    return width / updatedCategoryKeys.length;
-  }, [width, updatedCategoryKeys]);
+    return width / categoryKeys.length;
+  }, [width, categoryKeys]);
 
   const inactiveBorderColor = useMemo(() => {
     return darkMode ? '#8E8E93' : '#E5E5EA';
   }, [darkMode]);
 
   const Tabs = useMemo(() => {
-    return updatedCategoryKeys.map((key) => {
+    return categoryKeys.map((key) => {
       const category = categories[key];
       return (
         <TouchableOpacity
@@ -58,7 +48,7 @@ const TabBar = (props) => {
       );
     });
   }, [
-    updatedCategoryKeys,
+    categoryKeys,
     activeCategory,
     categories,
     tabSize,
@@ -82,7 +72,6 @@ TabBar.defaultProps = {
 };
 
 TabBar.propTypes = {
-  showHistory: PropTypes.bool,
   activeCategory: PropTypes.shape({
     symbol: PropTypes.string,
     name: PropTypes.string,

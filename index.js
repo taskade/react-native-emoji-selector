@@ -99,6 +99,14 @@ const EmojiSelector = (props) => {
     defaultTheme,
   ]);
   const isSearching = useMemo(() => searchQuery !== '', [searchQuery]);
+  const availableCategoryKeys = useMemo(() => {
+    return categoryKeys.filter((key) => {
+      if (key === 'history' && !showHistory) {
+        return false;
+      }
+      return true;
+    });
+  }, [showHistory]);
 
   const colSize = useMemo(() => {
     setComponentReady(width !== 0);
@@ -161,7 +169,6 @@ const EmojiSelector = (props) => {
         stickyIndex.push(index);
         stickyToIndex['history'] = index;
         index++;
-        sectionIndex++;
 
         sliceEmojiToRows(newHistory, columns).map((emojiRow) => {
           emojiList.push({
@@ -172,6 +179,7 @@ const EmojiSelector = (props) => {
           });
           index++;
         });
+        sectionIndex++;
       }
 
       for (const key of categoryKeys) {
@@ -186,7 +194,6 @@ const EmojiSelector = (props) => {
           stickyIndex.push(index);
           stickyToIndex[key] = index;
           index++;
-          sectionIndex++;
 
           sliceEmojiToRows(emojiIncluded, columns).map((emojiRow) => {
             emojiList.push({
@@ -197,6 +204,7 @@ const EmojiSelector = (props) => {
             });
             index++;
           });
+          sectionIndex++;
         }
       }
       setEmojiData({ data: emojiList, stickyIndex: stickyIndex });
@@ -237,20 +245,11 @@ const EmojiSelector = (props) => {
 
   const _handleViewableEmoji = useCallback(
     (index) => {
-      // only update at the emoji header
-      var currentIndex = index;
-      if (currentIndex % 2 !== 0) {
-        currentIndex = index - 1;
-      }
-
-      const emojiList = emojiData.data.find((key) => key.index === currentIndex);
-      categoryKeys.forEach((key) => {
-        if (Categories[key].name === emojiList.data) {
-          setCurrentCategory(Categories[key]);
-        }
-      });
+      const currentRow = emojiData.data[index];
+      const currentCategoryKey = availableCategoryKeys[currentRow.sectionIndex];
+      setCurrentCategory(Categories[currentCategoryKey]);
     },
-    [emojiData],
+    [availableCategoryKeys, emojiData],
   );
 
   const _handleSearch = useCallback(
@@ -274,16 +273,15 @@ const EmojiSelector = (props) => {
             />
           )}
 
-          {showTabs && (
+          {showTabs && isComponentReady && (
             <TabBar
               activeCategory={currentCategory}
               darkMode={darkMode}
               theme={primaryColor}
               width={width}
-              categoryKeys={categoryKeys}
+              categoryKeys={availableCategoryKeys}
               categories={Categories}
               reference={scrollView}
-              showHistory={showHistory}
               onPress={_handleTabSelect}
               onPressIn={_handleSearch}
             />
