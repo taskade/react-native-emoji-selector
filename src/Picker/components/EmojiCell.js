@@ -36,4 +36,4 @@ EmojiCell.propTypes = {
   theme: PropTypes.object,
 };
 
-export default EmojiCell;
+export default React.memo(EmojiCell);
