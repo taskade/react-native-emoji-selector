@@ -161,7 +161,7 @@ const EmojiSelector = (props) => {
       let sectionIndex = 0;
 
       if (showHistory) {
-        const newHistory = await _loadHistoryAsync();
+        const newHistory = await loadHistoryAsync();
         setHistory(newHistory);
 
         const name = Categories['history'].name;
@@ -215,7 +215,7 @@ const EmojiSelector = (props) => {
     prerenderEmojis();
   }, [showHistory, shouldInclude, columns]);
 
-  const _loadHistoryAsync = async () => {
+  const loadHistoryAsync = async () => {
     const result = await AsyncStorage.getItem(storage_key);
     if (result) {
       return JSON.parse(result);
@@ -223,7 +223,7 @@ const EmojiSelector = (props) => {
     return [];
   };
 
-  const _handleEmojiSelect = useCallback(
+  const handleEmojiSelect = useCallback(
     (selectedEmoji) => {
       onEmojiSelected(charFromEmojiObject(selectedEmoji));
     },
@@ -243,7 +243,7 @@ const EmojiSelector = (props) => {
     [isEmojiPrerender, showTabs, tabIndex],
   );
 
-  const _handleViewableEmoji = useCallback(
+  const handleViewableEmoji = useCallback(
     (index) => {
       const currentRow = emojiData.data[index];
       const currentCategoryKey = availableCategoryKeys[currentRow.sectionIndex];
@@ -252,7 +252,7 @@ const EmojiSelector = (props) => {
     [availableCategoryKeys, emojiData],
   );
 
-  const _handleSearch = useCallback(
+  const handleSearch = useCallback(
     (text) => {
       setSearchQuery(text);
     },
@@ -269,7 +269,7 @@ const EmojiSelector = (props) => {
               placeholder={placeholder}
               theme={primaryColor}
               searchQuery={searchQuery}
-              handleSearch={_handleSearch}
+              handleSearch={handleSearch}
             />
           )}
 
@@ -283,7 +283,7 @@ const EmojiSelector = (props) => {
               categories={Categories}
               reference={scrollView}
               onPress={_handleTabSelect}
-              onPressIn={_handleSearch}
+              onPressIn={handleSearch}
             />
           )}
 
@@ -293,8 +293,8 @@ const EmojiSelector = (props) => {
             <Picker
               pickerFlatListStyle={pickerFlatListStyle}
               contentContainerStyle={contentContainerStyle}
-              onEmojiSelected={_handleEmojiSelect}
-              onViewableItemsChanged={_handleViewableEmoji}
+              onEmojiSelected={handleEmojiSelect}
+              onViewableItemsChanged={handleViewableEmoji}
               colSize={colSize}
               columns={columns}
               data={isSearching ? searchResults : emojiData}
