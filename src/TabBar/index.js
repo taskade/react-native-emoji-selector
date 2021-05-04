@@ -1,13 +1,15 @@
 import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+
+import styles from './styles';
 
 const TabBar = (props) => {
   const {
     theme,
     activeCategory,
-    onPress,
-    onPressIn,
+    onPress = () => {},
+    onPressIn = () => {},
     width,
     darkMode,
     categoryKeys,
@@ -61,16 +63,6 @@ const TabBar = (props) => {
   return <View style={styles.tabBar}>{Tabs}</View>;
 };
 
-TabBar.defaultProps = {
-  isShown: true,
-  onPress: () => {},
-};
-
-TabBar.defaultProps = {
-  isShown: true,
-  onPress: () => {},
-};
-
 TabBar.propTypes = {
   activeCategory: PropTypes.shape({
     symbol: PropTypes.string,
@@ -84,21 +76,5 @@ TabBar.propTypes = {
   categoryKeys: PropTypes.array,
   categories: PropTypes.object,
 };
-
-const styles = StyleSheet.create({
-  tabBar: {
-    flexDirection: 'row',
-  },
-  tabContainer: {
-    flex: 1,
-    borderBottomWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emojiText: {
-    textAlign: 'center',
-    paddingBottom: 8,
-  },
-});
 
 export default TabBar;

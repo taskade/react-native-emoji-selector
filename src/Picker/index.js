@@ -30,11 +30,11 @@ const Picker = React.forwardRef((props, ref) => {
     onViewableItemsChanged(currentIndex);
   }, [currentIndex, onViewableItemsChanged]);
 
-  const _extractKey = useCallback((item, index) => {
+  const extractKey = useCallback((item, index) => {
     return `${item.index}_${index}`;
   }, []);
 
-  const _renderItem = useCallback(
+  const renderItem = useCallback(
     ({ item: { data: content, isHeader } }) =>
       isHeader ? (
         <Header theme={theme} darkMode={darkMode}>
@@ -68,6 +68,8 @@ const Picker = React.forwardRef((props, ref) => {
     [colSize],
   );
 
+  const getOnScollFailed = () => {};
+
   return (
     <FlatList
       ref={ref}
@@ -75,13 +77,13 @@ const Picker = React.forwardRef((props, ref) => {
       contentContainerStyle={[{ paddingBottom: colSize }, contentContainerStyle]}
       horizontal={false}
       keyboardShouldPersistTaps={'handled'}
-      keyExtractor={_extractKey}
+      keyExtractor={extractKey}
       data={emojiList}
       stickyHeaderIndices={stickyIndex}
       onViewableItemsChanged={handleItemsChange.current}
       viewabilityConfig={viewConfig.current}
-      onScrollToIndexFailed={() => {}}
-      renderItem={_renderItem}
+      onScrollToIndexFailed={getOnScollFailed}
+      renderItem={renderItem}
       getItemLayout={getItemLayout}
       initialNumToRender={20}
       {...others}
