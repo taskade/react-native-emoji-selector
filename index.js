@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import emoji from 'emoji-datasource';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -7,11 +6,12 @@ import { ActivityIndicator, StyleSheet, View, ViewPropTypes } from 'react-native
 import { Picker, SearchBar, TabBar } from './src';
 import { charFromEmojiObject } from './src/helpers';
 import { DARK_THEME, LIGHT_THEME } from './src/themes.js';
+import { getFrequentEmojis } from './src/utils/frequentEmojis';
 
 export const Categories = {
   history: {
     symbol: '🕘',
-    name: 'Recently Used',
+    name: 'Frequently Used',
   },
   emotion: {
     symbol: '😀',
@@ -55,7 +55,6 @@ const filteredEmojis = emoji.filter((e) => !e['obsoleted_by']);
 const emojiByCategory = (category) => filteredEmojis.filter((e) => e.category === category);
 const sortEmoji = (list) => list.sort((a, b) => a.sort_order - b.sort_order);
 const categoryKeys = Object.keys(Categories);
-const storage_key = '@react-native-emoji-selector:HISTORY';
 const sliceEmojiToRows = (array, size) => {
   let slicedArray = [];
   for (let i = 0; i < array.length; i += size) {
@@ -68,14 +67,14 @@ const EmojiSelector = (props) => {
   const {
     theme = {},
     columns = 6,
-    category = Categories.all,
+    // category = Categories.all,
     placeholder = 'Search',
     darkMode = false,
     showTabs = true,
     showSearchBar = true,
     showHistory = true,
     shouldInclude = undefined,
-    showSectionTitles = true,
+    // showSectionTitles = true,
     onEmojiSelected,
     contentContainerStyle = undefined,
     pickerStyle = undefined,
@@ -161,7 +160,7 @@ const EmojiSelector = (props) => {
       let sectionIndex = 0;
 
       if (showHistory) {
-        const newHistory = await loadHistoryAsync();
+        const newHistory = await getFrequentEmojis();
         setHistory(newHistory);
 
         const name = Categories['history'].name;
@@ -214,14 +213,6 @@ const EmojiSelector = (props) => {
 
     prerenderEmojis();
   }, [showHistory, shouldInclude, columns]);
-
-  const loadHistoryAsync = async () => {
-    const result = await AsyncStorage.getItem(storage_key);
-    if (result) {
-      return JSON.parse(result);
-    }
-    return [];
-  };
 
   const handleEmojiSelect = useCallback(
     (selectedEmoji) => {
