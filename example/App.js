@@ -17,7 +17,7 @@ export default function App() {
         Please select the emoji you would like to use
       </Text>
       <View style={styles.display}>
-        <Text style={{ fontSize: 64, backgroundColor: 'transparent' }}>{emoji}</Text>
+        <Text style={{ fontSize: 48, backgroundColor: 'transparent' }}>{emoji}</Text>
       </View>
       <EmojiSelector
         onEmojiSelected={(emoji) => setEmoji(emoji)}
