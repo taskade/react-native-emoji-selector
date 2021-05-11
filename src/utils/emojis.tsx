@@ -8,19 +8,11 @@ export const getEmojisByCategory = (category: string) =>
   filteredEmojis.filter((e) => e.category === category);
 
 export const getEmojiByUnifiedKey = (unified: string) => {
-  const emojiFound = filteredEmojis.filter((e) => e.unified === unified);
-  if (emojiFound.length === 0) {
-    return undefined;
-  }
-  return emojiFound[0];
+  return filteredEmojis.find((e) => e.unified === unified);
 };
 
 export const getEmojiByShortName = (name: string) => {
-  const emojiFound = filteredEmojis.filter((e) => e.short_name === name);
-  if (emojiFound.length === 0) {
-    return undefined;
-  }
-  return emojiFound[0];
+  return filteredEmojis.find((e) => e.short_name === name);
 };
 
 export const sortEmoji = (list: EmojiProps[]) => list.sort((a, b) => a.sort_order - b.sort_order);

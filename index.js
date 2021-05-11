@@ -6,7 +6,7 @@ import { ActivityIndicator, StyleSheet, View, ViewPropTypes } from 'react-native
 import { Picker, SearchBar, TabBar } from './src';
 import { charFromEmojiObject } from './src/helpers';
 import { DARK_THEME, LIGHT_THEME } from './src/themes.js';
-import { getFrequentEmojis } from './src/utils/frequentEmojis';
+import { getFrequentEmojis, setFrequentEmojis } from './src/utils/frequentEmojis';
 
 export const Categories = {
   history: {
@@ -216,9 +216,12 @@ const EmojiSelector = (props) => {
 
   const handleEmojiSelect = useCallback(
     (selectedEmoji) => {
+      if (showHistory) {
+        setFrequentEmojis(selectedEmoji);
+      }
       onEmojiSelected(charFromEmojiObject(selectedEmoji));
     },
-    [onEmojiSelected],
+    [onEmojiSelected, showHistory],
   );
 
   const _handleTabSelect = useCallback(
