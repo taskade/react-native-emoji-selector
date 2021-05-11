@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
 
-import { charFromEmojiObject } from '../../helpers';
+import { charFromEmojiObject } from '../../utils/emojis';
 import EmojiCell from './EmojiCell';
 import styles from './styles';
 const EmojiNotFound = ['🤔', '🕵️‍♀️', '🙈'];
