@@ -1,3 +1,12 @@
+import { ColorValue } from 'react-native';
+
+export interface ThemeProps {
+  primary?: ColorValue;
+  background?: ColorValue;
+  label?: ColorValue;
+  underlay?: ColorValue;
+}
+
 export const LIGHT_THEME = {
   primary: '#007AFF',
   background: '#FFFFFF',
