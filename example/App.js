@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Platform, SafeAreaView, StyleSheet, Text, useColorScheme, View } from 'react-native';
 
-import EmojiSelector, { Categories } from './src/emoji-selector';
+import EmojiSelector from './src/emoji-selector';
 
 export default function App() {
   const [emoji, setEmoji] = useState(' ');
