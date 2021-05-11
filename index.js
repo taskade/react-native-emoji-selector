@@ -19,7 +19,6 @@ const EmojiSelector = (props) => {
   const {
     theme = {},
     columns = 6,
-    // category = Categories.all,
     placeholder = 'Search',
     darkMode = false,
     showTabs = true,
@@ -27,7 +26,7 @@ const EmojiSelector = (props) => {
     showHistory = true,
     shouldInclude = undefined,
     // showSectionTitles = true,
-    onEmojiSelected,
+    onEmojiSelected = () => {},
     contentContainerStyle = undefined,
     pickerStyle = undefined,
     pickerFlatListStyle = undefined,
