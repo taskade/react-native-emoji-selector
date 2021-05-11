@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
+import { CATEGORIES } from '../utils/emojis';
 import styles from './styles';
 
 const TabBar = (props) => {
@@ -13,7 +14,6 @@ const TabBar = (props) => {
     width,
     darkMode,
     categoryKeys,
-    categories,
   } = props;
 
   const tabSize = useMemo(() => {
@@ -29,7 +29,7 @@ const TabBar = (props) => {
 
   const Tabs = useMemo(() => {
     return categoryKeys.map((key) => {
-      const category = categories[key];
+      const category = CATEGORIES[key];
       return (
         <TouchableOpacity
           key={category.name}
@@ -49,16 +49,7 @@ const TabBar = (props) => {
         </TouchableOpacity>
       );
     });
-  }, [
-    categoryKeys,
-    activeCategory,
-    categories,
-    tabSize,
-    inactiveBorderColor,
-    theme,
-    onPress,
-    onPressIn,
-  ]);
+  }, [categoryKeys, activeCategory, tabSize, inactiveBorderColor, theme, onPress, onPressIn]);
 
   return <View style={styles.tabBar}>{Tabs}</View>;
 };
@@ -74,7 +65,6 @@ TabBar.propTypes = {
   width: PropTypes.number,
   darkMode: PropTypes.bool,
   categoryKeys: PropTypes.array,
-  categories: PropTypes.object,
 };
 
 export default TabBar;

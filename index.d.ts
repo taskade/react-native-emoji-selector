@@ -1,26 +1,7 @@
 declare module 'react-native-emoji-selector' {
   import * as React from 'react';
   import { ColorValue, ViewStyle } from 'react-native';
-
-  /**
-   * Categories
-   * The package itself exports a dictionary of objects, however
-   * to to enforce usage of the exported dictionary the types
-   * just simplifies to an enum. Once compiled it runs the
-   * same because the export is named the same.
-   */
-  export enum Categories {
-    history = 'history',
-    emotion = 'emotion',
-    people = 'people',
-    nature = 'nature',
-    food = 'food',
-    activities = 'activities',
-    places = 'places',
-    objects = 'objects',
-    symbols = 'symbols',
-    flag = 'flag',
-  }
+  import { Categories } from 'emoji';
 
   export interface EmojiSelectorProps {
     onEmojiSelected(emoji: string): void;

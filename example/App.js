@@ -20,12 +20,11 @@ export default function App() {
         <Text style={{ fontSize: 48, backgroundColor: 'transparent' }}>{emoji}</Text>
       </View>
       <EmojiSelector
-        onEmojiSelected={(emoji) => setEmoji(emoji)}
+        onEmojiSelected={(emojiObj) => setEmoji(emojiObj)}
         showSearchBar={true}
         showTabs={true}
         showHistory={true}
         showSectionTitles={true}
-        category={Categories.all}
         darkMode={isDarkMode}
         theme={theme}
       />
