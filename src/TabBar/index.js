@@ -2,19 +2,13 @@ import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
+import { useThemeContext } from '../context/ThemeContext';
 import { CATEGORIES } from '../utils/emojis';
 import styles from './styles';
 
 const TabBar = (props) => {
-  const {
-    theme,
-    activeCategory,
-    onPress = () => {},
-    onPressIn = () => {},
-    width,
-    darkMode,
-    categoryKeys,
-  } = props;
+  const { activeCategory, onPress = () => {}, onPressIn = () => {}, width, categoryKeys } = props;
+  const { isDark, theme } = useThemeContext();
 
   const tabSize = useMemo(() => {
     if (width === 0) {
@@ -24,8 +18,8 @@ const TabBar = (props) => {
   }, [width, categoryKeys]);
 
   const inactiveBorderColor = useMemo(() => {
-    return darkMode ? '#8E8E93' : '#E5E5EA';
-  }, [darkMode]);
+    return isDark ? '#8E8E93' : '#E5E5EA';
+  }, [isDark]);
 
   const Tabs = useMemo(() => {
     return categoryKeys.map((key) => {
@@ -39,7 +33,7 @@ const TabBar = (props) => {
             styles.tabContainer,
             {
               height: tabSize,
-              borderColor: category === activeCategory ? theme : inactiveBorderColor,
+              borderColor: category === activeCategory ? theme.primary : inactiveBorderColor,
             },
           ]}
         >
@@ -59,11 +53,9 @@ TabBar.propTypes = {
     symbol: PropTypes.string,
     name: PropTypes.string,
   }),
-  theme: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   onPress: PropTypes.func,
   onPressIn: PropTypes.func,
   width: PropTypes.number,
-  darkMode: PropTypes.bool,
   categoryKeys: PropTypes.array,
 };
 

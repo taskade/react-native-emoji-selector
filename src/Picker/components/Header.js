@@ -2,18 +2,16 @@ import PropsTypes from 'prop-types';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { DARK_THEME, LIGHT_THEME } from '../../themes';
+import { useThemeContext } from '../../context/ThemeContext';
 import styles from './styles';
 
 const Header = (props) => {
-  const { children, theme = undefined, darkMode } = props;
-  const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
-  const label = theme.label || defaultTheme.label;
-  const background = theme.background ? theme.background : defaultTheme.background;
+  const { children } = props;
+  const { theme } = useThemeContext();
 
   return (
-    <View style={[styles.headerContainer, { backgroundColor: background }]}>
-      <Text allowFontScaling={false} style={[styles.headerText, { color: label }]}>
+    <View style={[styles.headerContainer, { backgroundColor: theme.background }]}>
+      <Text allowFontScaling={false} style={[styles.headerText, { color: theme.label }]}>
         {children}
       </Text>
     </View>
@@ -22,8 +20,6 @@ const Header = (props) => {
 
 Header.propTypes = {
   children: PropsTypes.node,
-  darkMode: PropsTypes.bool,
-  theme: PropsTypes.object,
 };
 
 export default React.memo(Header);

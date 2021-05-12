@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, StyleSheet, View, ViewPropTypes } from 'react-native';
 
 import { Picker, SearchBar, TabBar } from './src';
-import { DARK_THEME, LIGHT_THEME } from './src/themes';
+import { DARK_THEME, LIGHT_THEME, ThemeWrapper, useThemeContext } from './src/context/ThemeContext';
 import {
   CATEGORIES,
   CATEGORIES_KEYS,
@@ -32,6 +32,7 @@ const EmojiSelector = (props) => {
     pickerFlatListStyle = undefined,
     ...others
   } = props;
+  const { isDark } = useThemeContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [isEmojiPrerender, setEmojiPrerender] = useState(false);
   const [isComponentReady, setComponentReady] = useState(false);
@@ -39,13 +40,12 @@ const EmojiSelector = (props) => {
   const [emojiData, setEmojiData] = useState({});
   const [currentCategory, setCurrentCategory] = useState(CATEGORIES.history);
   const [width, onLayout] = useComponentWidth();
-  const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
   const scrollView = useRef(null);
-  const primaryColor = useMemo(() => theme.primary || defaultTheme.primary, [theme, defaultTheme]);
-  const backgroundColor = useMemo(() => theme.background || defaultTheme.background, [
-    theme,
-    defaultTheme,
-  ]);
+  const currentTheme = useMemo(() => {
+    const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
+    return { ...defaultTheme, ...theme };
+  }, [darkMode, theme]);
+
   const isSearching = useMemo(() => searchQuery !== '', [searchQuery]);
   const availableCategoryKeys = useMemo(() => {
     return CATEGORIES_KEYS.filter((key) => {
@@ -201,14 +201,14 @@ const EmojiSelector = (props) => {
   );
 
   return (
-    <View style={[styles.frame, { backgroundColor: backgroundColor }, pickerStyle]}>
-      <View style={{ flex: 1 }} onLayout={onLayout}>
-        <View style={{ flex: 1 }}>
+    <ThemeWrapper darkMode={darkMode} customTheme={theme}>
+      <View style={[styles.frame, { backgroundColor: currentTheme.background }, pickerStyle]}>
+        <View style={{ flex: 1 }} onLayout={onLayout}>
+          {/* <View style={{ flex: 1 }}> */}
           {showSearchBar && (
             <SearchBar
-              darkMode={darkMode}
+              darkMode={isDark}
               placeholder={placeholder}
-              theme={primaryColor}
               searchQuery={searchQuery}
               handleSearch={handleSearch}
             />
@@ -217,8 +217,6 @@ const EmojiSelector = (props) => {
           {showTabs && isComponentReady && (
             <TabBar
               activeCategory={currentCategory}
-              darkMode={darkMode}
-              theme={primaryColor}
               width={width}
               categoryKeys={availableCategoryKeys}
               reference={scrollView}
@@ -228,7 +226,7 @@ const EmojiSelector = (props) => {
           )}
 
           {!(isEmojiPrerender && isComponentReady) ? (
-            <Loading theme={primaryColor} {...others} />
+            <Loading theme={currentTheme.primary} {...others} />
           ) : (
             <Picker
               pickerFlatListStyle={pickerFlatListStyle}
@@ -239,14 +237,13 @@ const EmojiSelector = (props) => {
               columns={columns}
               data={isSearching ? searchResults : emojiData}
               ref={scrollView}
-              darkMode={darkMode}
-              theme={theme}
               {...others}
             />
           )}
         </View>
+        {/* </View> */}
       </View>
-    </View>
+    </ThemeWrapper>
   );
 };
 
