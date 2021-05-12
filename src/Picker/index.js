@@ -12,8 +12,6 @@ const Picker = React.forwardRef((props, ref) => {
     colSize,
     columns = 6,
     data,
-    darkMode = false,
-    theme = {},
     onViewableItemsChanged,
     ...others
   } = props;
@@ -37,20 +35,16 @@ const Picker = React.forwardRef((props, ref) => {
   const renderItem = useCallback(
     ({ item: { data: content, isHeader } }) =>
       isHeader ? (
-        <Header theme={theme} darkMode={darkMode}>
-          {content}
-        </Header>
+        <Header>{content}</Header>
       ) : (
         <EmojiRow
           colSize={colSize}
           columns={columns}
           data={content}
-          darkMode={darkMode}
           onEmojiSelected={onEmojiSelected}
-          theme={theme}
         />
       ),
-    [theme, darkMode, colSize, columns, onEmojiSelected],
+    [colSize, columns, onEmojiSelected],
   );
 
   const getItemLayout = useCallback(
@@ -100,8 +94,6 @@ Picker.propTypes = {
   data: PropTypes.object,
   onEmojiSelected: PropTypes.func.isRequired,
   onViewableItemsChanged: PropTypes.func,
-  darkMode: PropTypes.bool,
-  theme: PropTypes.object,
 };
 
 export default Picker;
