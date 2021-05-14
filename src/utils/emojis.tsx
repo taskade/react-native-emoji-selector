@@ -1,6 +1,11 @@
 import emoji, { EmojiProps } from 'emoji-datasource';
 
-const CATEGORIES = {
+export interface CategoryTypeProps {
+  symbol: string;
+  name: string;
+}
+
+const CATEGORIES: Record<string, CategoryTypeProps> = {
   history: {
     symbol: '🕘',
     name: 'Frequently Used',
