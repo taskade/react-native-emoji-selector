@@ -1,9 +1,9 @@
 import emoji from 'emoji-datasource';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View, ViewPropTypes } from 'react-native';
+import { StyleSheet, View, ViewPropTypes } from 'react-native';
 
-import { Picker, SearchBar, TabBar } from './src';
+import { Loading, Picker, SearchBar, TabBar } from './src/components';
 import { DARK_THEME, LIGHT_THEME, ThemeWrapper, useThemeContext } from './src/context/ThemeContext';
 import {
   CATEGORIES,
@@ -207,7 +207,6 @@ const EmojiSelector = (props) => {
           {/* <View style={{ flex: 1 }}> */}
           {showSearchBar && (
             <SearchBar
-              darkMode={isDark}
               placeholder={placeholder}
               searchQuery={searchQuery}
               handleSearch={handleSearch}
@@ -226,7 +225,7 @@ const EmojiSelector = (props) => {
           )}
 
           {!(isEmojiPrerender && isComponentReady) ? (
-            <Loading theme={currentTheme.primary} {...others} />
+            <Loading {...others} />
           ) : (
             <Picker
               pickerFlatListStyle={pickerFlatListStyle}
@@ -244,16 +243,6 @@ const EmojiSelector = (props) => {
         {/* </View> */}
       </View>
     </ThemeWrapper>
-  );
-};
-
-// Loading spinner as emoji is being loaded
-const Loading = (props) => {
-  const { theme, ...others } = props;
-  return (
-    <View style={styles.loader} {...others}>
-      <ActivityIndicator size={'large'} color={theme} />
-    </View>
   );
 };
 
@@ -283,19 +272,10 @@ EmojiSelector.propTypes = {
   pickerFlatListStyle: ViewPropTypes.style,
 };
 
-Loading.propTypes = {
-  theme: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-};
-
 const styles = StyleSheet.create({
   frame: {
     flex: 1,
     width: '100%',
-  },
-  loader: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   sectionHeader: {
     margin: 8,

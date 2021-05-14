@@ -40,5 +40,5 @@ export default StyleSheet.create({
   searchDark: {
     backgroundColor: '#48484A',
     color: '#FFFFFF87',
-  }
+  },
 });
