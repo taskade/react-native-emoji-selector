@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { StyleSheet, View, ViewPropTypes } from 'react-native';
 
 import { Loading, Picker, SearchBar, TabBar } from './src/components';
-import { DARK_THEME, LIGHT_THEME, ThemeWrapper, useThemeContext } from './src/context/ThemeContext';
+import { DARK_THEME, LIGHT_THEME, ThemeWrapper } from './src/context/ThemeContext';
 import {
   CATEGORIES,
   CATEGORIES_KEYS,
@@ -32,7 +32,6 @@ const EmojiSelector = (props) => {
     pickerFlatListStyle = undefined,
     ...others
   } = props;
-  const { isDark } = useThemeContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [isEmojiPrerender, setEmojiPrerender] = useState(false);
   const [isComponentReady, setComponentReady] = useState(false);
