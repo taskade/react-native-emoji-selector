@@ -1,21 +1,49 @@
-import emoji from 'emoji-datasource';
-import PropTypes from 'prop-types';
+import emoji, { EmojiProps } from 'emoji-datasource';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { StyleSheet, View, ViewPropTypes } from 'react-native';
+import { FlatList, StyleProp, View, ViewStyle } from 'react-native';
 
 import { Loading, Picker, SearchBar, TabBar } from './src/components';
-import { DARK_THEME, LIGHT_THEME, ThemeWrapper } from './src/context/ThemeContext';
+import { DARK_THEME, LIGHT_THEME, ThemeProps, ThemeWrapper } from './src/context/ThemeContext';
 import {
   CATEGORIES,
   CATEGORIES_KEYS,
+  CategoryTypeProps,
   charFromEmojiObject,
   getEmojisByCategory,
   sliceEmojiToRows,
   sortEmoji,
 } from './src/utils/emojis';
 import { getFrequentEmojis, setFrequentEmojis } from './src/utils/frequentEmojis';
+import useComponentWidth from './src/utils/useComponentWidth';
+import styles from './styles';
 
-const EmojiSelector = (props) => {
+interface Props {
+  columns?: number;
+  placeholder?: string;
+  darkMode?: boolean;
+  showTabs?: boolean;
+  showSectionTitles?: boolean;
+  showSearchBar?: boolean;
+  showHistory?: boolean;
+  theme?: ThemeProps;
+  pickerStyle?: StyleProp<ViewStyle>;
+  contentContainerStyle?: StyleProp<FlatList>;
+  pickerFlatListStyle?: StyleProp<FlatList>;
+  shouldInclude?: (emojiObj: EmojiProps) => boolean;
+  onEmojiSelected: (emojiString: string) => void;
+}
+
+interface EmojiDataProps {
+  data: {
+    data: EmojiProps[] | string;
+    index: number;
+    sectionIndex: number;
+    isHeader: boolean;
+  }[];
+  stickyIndex: number[];
+}
+
+const EmojiSelector: React.FC<Props> = (props) => {
   const {
     theme = {},
     columns = 6,
@@ -32,20 +60,23 @@ const EmojiSelector = (props) => {
     pickerFlatListStyle = undefined,
     ...others
   } = props;
+
   const [searchQuery, setSearchQuery] = useState('');
   const [isEmojiPrerender, setEmojiPrerender] = useState(false);
   const [isComponentReady, setComponentReady] = useState(false);
-  const [tabIndex, setTabIndex] = useState({});
-  const [emojiData, setEmojiData] = useState({});
-  const [currentCategory, setCurrentCategory] = useState(CATEGORIES.history);
+  const [tabIndex, setTabIndex] = useState<{ [key: string]: number }>({});
+  const [emojiData, setEmojiData] = useState<EmojiDataProps>();
+  const [currentCategory, setCurrentCategory] = useState<CategoryTypeProps>(CATEGORIES.history);
   const [width, onLayout] = useComponentWidth();
-  const scrollView = useRef(null);
+  const scrollView = useRef<FlatList>(null);
+
   const currentTheme = useMemo(() => {
     const defaultTheme = darkMode ? DARK_THEME : LIGHT_THEME;
     return { ...defaultTheme, ...theme };
   }, [darkMode, theme]);
 
   const isSearching = useMemo(() => searchQuery !== '', [searchQuery]);
+
   const availableCategoryKeys = useMemo(() => {
     return CATEGORIES_KEYS.filter((key) => {
       if (key === 'history' && !showHistory) {
@@ -63,7 +94,7 @@ const EmojiSelector = (props) => {
     return Math.floor(width / columns);
   }, [width, columns]);
 
-  const searchResults = useMemo(() => {
+  const searchResults: EmojiDataProps | undefined = useMemo(() => {
     if (searchQuery === '') {
       return undefined;
     }
@@ -103,7 +134,7 @@ const EmojiSelector = (props) => {
     const prerenderEmojis = async () => {
       const emojiList = [];
       const stickyIndex = [];
-      const stickyToIndex = {};
+      const stickyToIndex: { [key: string]: number } = {};
       let index = 0;
       let sectionIndex = 0;
 
@@ -171,10 +202,10 @@ const EmojiSelector = (props) => {
   );
 
   const handleTabSelect = useCallback(
-    (cat) => {
+    (cat: string) => {
       if (isEmojiPrerender && showTabs) {
         setCurrentCategory(CATEGORIES[cat]);
-        scrollView.current.scrollToIndex({
+        scrollView.current?.scrollToIndex({
           animated: true,
           index: tabIndex[cat],
         });
@@ -185,9 +216,11 @@ const EmojiSelector = (props) => {
 
   const handleViewableEmoji = useCallback(
     (index) => {
-      const currentRow = emojiData.data[index];
-      const currentCategoryKey = availableCategoryKeys[currentRow.sectionIndex];
-      setCurrentCategory(CATEGORIES[currentCategoryKey]);
+      const currentRow = emojiData?.data[index];
+      if (currentRow) {
+        const currentCategoryKey = availableCategoryKeys[currentRow.sectionIndex];
+        setCurrentCategory(CATEGORIES[currentCategoryKey]);
+      }
     },
     [availableCategoryKeys, emojiData],
   );
@@ -217,7 +250,7 @@ const EmojiSelector = (props) => {
               activeCategory={currentCategory}
               width={width}
               categoryKeys={availableCategoryKeys}
-              reference={scrollView}
+              // ref={scrollView}
               onPress={handleTabSelect}
               onPressIn={handleSearch}
             />
@@ -244,44 +277,5 @@ const EmojiSelector = (props) => {
     </ThemeWrapper>
   );
 };
-
-// Get width of container to calculate sizing of tabs
-const useComponentWidth = () => {
-  const [width, setWidth] = useState(0);
-  const onLayout = useCallback((event) => {
-    setWidth(event.nativeEvent.layout.width);
-  }, []);
-  return [width, onLayout];
-};
-
-EmojiSelector.propTypes = {
-  category: PropTypes.object,
-  columns: PropTypes.number,
-  placeholder: PropTypes.string,
-  showTabs: PropTypes.bool,
-  showSearchBar: PropTypes.bool,
-  showHistory: PropTypes.bool,
-  showSectionTitles: PropTypes.bool,
-  shouldInclude: PropTypes.func,
-  onEmojiSelected: PropTypes.func.isRequired,
-  theme: PropTypes.object,
-  darkMode: PropTypes.bool,
-  contentContainerStyle: ViewPropTypes.style,
-  pickerStyle: ViewPropTypes.style,
-  pickerFlatListStyle: ViewPropTypes.style,
-};
-
-const styles = StyleSheet.create({
-  frame: {
-    flex: 1,
-    width: '100%',
-  },
-  sectionHeader: {
-    margin: 8,
-    fontSize: 17,
-    width: '100%',
-    color: '#8F8F8F',
-  },
-});
 
 export default EmojiSelector;
