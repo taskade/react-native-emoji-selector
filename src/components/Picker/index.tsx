@@ -1,28 +1,52 @@
-import PropTypes from 'prop-types';
+import { EmojiProps } from 'emoji-datasource';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, ViewPropTypes } from 'react-native';
+import { FlatList, ViewStyle, ViewToken } from 'react-native';
 
 import { EmojiRow, Header } from './components';
 
-const Picker = React.forwardRef((props, ref) => {
+interface Props {
+  pickerFlatListStyle?: ViewStyle;
+  contentContainerStyle?: ViewStyle;
+  columns?: number;
+  numColumns: number;
+  colSize: number;
+  data: {
+    data: {
+      data: EmojiProps[] | string;
+      index: number;
+      sectionIndex: number;
+      isHeader: boolean;
+    }[];
+    stickyIndex: number[];
+  };
+  onEmojiSelected: (selectedEmoji: EmojiProps) => void;
+  onViewableItemsChanged: (index: number) => void;
+}
+
+interface ViewableItemChangedProps {
+  viewableItems: ViewToken[];
+  changed: ViewToken[];
+}
+
+const Picker: React.FC<Props> = React.forwardRef<FlatList, Props>((props, ref) => {
   const {
-    pickerFlatListStyle,
-    contentContainerStyle,
-    onEmojiSelected,
+    pickerFlatListStyle = {},
+    contentContainerStyle = {},
     colSize,
     columns = 6,
     data,
+    onEmojiSelected,
     onViewableItemsChanged,
     ...others
   } = props;
   const { data: emojiList, stickyIndex } = data;
   const [currentIndex, setCurrentIndex] = useState(0);
   const viewConfig = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
-  const handleItemsChange = React.useRef(({ viewableItems }) => {
+  const handleItemsChange = React.useRef(({ viewableItems }: ViewableItemChangedProps) => {
     if (viewableItems[0]) {
-      setCurrentIndex(viewableItems[0].index);
+      setCurrentIndex(viewableItems[0]?.index || 0);
     }
-  }, []);
+  });
 
   useEffect(() => {
     onViewableItemsChanged(currentIndex);
@@ -62,7 +86,7 @@ const Picker = React.forwardRef((props, ref) => {
     [colSize],
   );
 
-  const getOnScollFailed = () => {};
+  const getOnScollFailed = useCallback(() => {}, []);
 
   return (
     <FlatList
@@ -84,16 +108,5 @@ const Picker = React.forwardRef((props, ref) => {
     />
   );
 });
-
-Picker.propTypes = {
-  pickerFlatListStyle: ViewPropTypes.style,
-  contentContainerStyle: ViewPropTypes.style,
-  columns: PropTypes.number,
-  numColumns: PropTypes.number,
-  colSize: PropTypes.number,
-  data: PropTypes.object,
-  onEmojiSelected: PropTypes.func.isRequired,
-  onViewableItemsChanged: PropTypes.func,
-};
 
 export default Picker;

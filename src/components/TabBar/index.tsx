@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
@@ -6,7 +5,19 @@ import { useThemeContext } from '../../context/ThemeContext';
 import { CATEGORIES } from '../../utils/emojis';
 import styles from './styles';
 
-const TabBar = (props) => {
+interface Props {
+  activeCategory: {
+    symbol: string;
+    name: string;
+  };
+  name: string;
+  onPress: (key: string) => void;
+  onPressIn: (key: string) => void;
+  width: number;
+  categoryKeys: string[];
+}
+
+const TabBar: React.FC<Props> = (props) => {
   const { activeCategory, onPress = () => {}, onPressIn = () => {}, width, categoryKeys } = props;
   const { isDark, theme } = useThemeContext();
 
@@ -46,17 +57,6 @@ const TabBar = (props) => {
   }, [categoryKeys, activeCategory, tabSize, inactiveBorderColor, theme, onPress, onPressIn]);
 
   return <View style={styles.tabBar}>{Tabs}</View>;
-};
-
-TabBar.propTypes = {
-  activeCategory: PropTypes.shape({
-    symbol: PropTypes.string,
-    name: PropTypes.string,
-  }),
-  onPress: PropTypes.func,
-  onPressIn: PropTypes.func,
-  width: PropTypes.number,
-  categoryKeys: PropTypes.array,
 };
 
 export default TabBar;

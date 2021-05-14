@@ -1,11 +1,16 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import { TextInput, View } from 'react-native';
 
 import { useThemeContext } from '../../context/ThemeContext';
 import styles from './styles';
 
-const SearchBar = (props) => {
+interface Props {
+  placeholder: string;
+  searchQuery: string;
+  handleSearch: (search: string) => void;
+}
+
+const SearchBar: React.FC<Props> = (props) => {
   const { isDark } = useThemeContext();
   const { placeholder, searchQuery, handleSearch } = props;
   return (
@@ -22,12 +27,6 @@ const SearchBar = (props) => {
       />
     </View>
   );
-};
-
-SearchBar.propTypes = {
-  placeholder: PropTypes.string,
-  handleSearch: PropTypes.func,
-  searchQuery: PropTypes.string,
 };
 
 export default SearchBar;

@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import { EmojiProps } from 'emoji-datasource';
 import React, { useMemo } from 'react';
 import { Text, View } from 'react-native';
 
@@ -8,7 +8,14 @@ import EmojiCell from './EmojiCell';
 import styles from './styles';
 const EmojiNotFound = ['🤔', '🕵️‍♀️', '🙈'];
 
-const EmojiRow = (props) => {
+interface Props {
+  colSize: number;
+  columns: number;
+  data: EmojiProps[];
+  onEmojiSelected: (selectedEmoji: EmojiProps) => void;
+}
+
+const EmojiRow: React.FC<Props> = (props) => {
   const { colSize, data, onEmojiSelected } = props;
   const { isDark } = useThemeContext();
 
@@ -33,13 +40,6 @@ const EmojiRow = (props) => {
       ))}
     </View>
   );
-};
-
-EmojiRow.propTypes = {
-  colSize: PropTypes.number.isRequired,
-  columns: PropTypes.number.isRequired,
-  data: PropTypes.array.isRequired,
-  onEmojiSelected: PropTypes.func.isRequired,
 };
 
 export default React.memo(EmojiRow);
