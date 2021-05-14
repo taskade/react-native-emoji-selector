@@ -28,8 +28,8 @@ const DEFAULT_FREQUENCY = [
   'clap',
 ];
 const STORAGE_KEY = '@react-native-emoji-selector:HISTORY';
-const MAX_NUMBER_EMOJI_SHOWN = 40;
-const MAX_RECENT_EMOJI = 6;
+const MAX_NUMBER_EMOJI_SHOWN = 24;
+const MAX_RECENT_EMOJI = 3;
 let isInitalised = false;
 let frequentList: EmojiFrequencyProps[] = [];
 
