@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
-import { useThemeContext } from '../context/ThemeContext';
-import { CATEGORIES } from '../utils/emojis';
+import { useThemeContext } from '../../context/ThemeContext';
+import { CATEGORIES } from '../../utils/emojis';
 import styles from './styles';
 
 const TabBar = (props) => {
