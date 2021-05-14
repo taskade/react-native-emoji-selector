@@ -2,7 +2,7 @@ import PropsTypes from 'prop-types';
 import React from 'react';
 import { Text, View } from 'react-native';
 
-import { useThemeContext } from '../../context/ThemeContext';
+import { useThemeContext } from '../../../context/ThemeContext';
 import styles from './styles';
 
 const Header = (props) => {
