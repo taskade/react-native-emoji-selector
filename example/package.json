@@ -4,8 +4,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "dev": "mkdir -p src/emoji-selector && cp ../index.js src/emoji-selector && cp -r ../src src/emoji-selector",
+    "dev": "mkdir -p src/emoji-selector && cp ../index.tsx ../styles.tsx src/emoji-selector && cp -r ../src src/emoji-selector",
     "cleanup": "rm -rf node_modules src",
+    "reset": "yarn cleanup && yarn install && yarn dev",
     "eject": "expo eject"
   },
   "dependencies": {

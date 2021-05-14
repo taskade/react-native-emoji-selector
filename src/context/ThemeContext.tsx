@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { ColorValue } from 'react-native';
 
-interface ThemeProps {
+export interface ThemeProps {
   primary?: ColorValue;
   background?: ColorValue;
   label?: ColorValue;
