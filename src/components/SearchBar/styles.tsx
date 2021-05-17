@@ -3,8 +3,8 @@ import { Platform, StyleSheet } from 'react-native';
 export default StyleSheet.create({
   searchbarContainer: {
     zIndex: 1,
-    marginLeft: 8,
-    marginRight: 8,
+    marginHorizontal: 8,
+    marginBottom: 8,
 
     ...Platform.select({
       ios: {},
@@ -12,7 +12,7 @@ export default StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         borderRadius: 10,
-        height: 36,
+        height: 40,
         borderWidth: 1,
         borderColor: '#00000027',
       },
@@ -26,7 +26,6 @@ export default StyleSheet.create({
 
     ...Platform.select({
       ios: {
-        backgroundColor: '#F2F2F7',
         height: 36,
         borderRadius: 10,
       },
