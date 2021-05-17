@@ -15,7 +15,7 @@ declare module 'react-native-emoji-selector' {
     theme?: { [key: string]: ColorValue };
     pickerStyle?: StyleProp<ViewStyle>;
     contentContainerStyle?: StyleProp<FlatList>;
-    pickerFlatListStyle?: StyleProp<FlatList>;
+    pickerFlatListStyle?: StyleProp<ViewStyle>;
     shouldInclude?: (emojiObj: any) => boolean;
     onEmojiSelected: (emojiString: string) => void;
   }
