@@ -10,7 +10,6 @@ interface Props {
     symbol: string;
     name: string;
   };
-  name: string;
   onPress: (key: string) => void;
   onPressIn: (key: string) => void;
   width: number;
