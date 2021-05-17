@@ -11,19 +11,22 @@ interface Props {
 }
 
 const SearchBar: React.FC<Props> = (props) => {
-  const { isDark } = useThemeContext();
+  const { theme } = useThemeContext();
   const { placeholder, searchQuery, handleSearch } = props;
   return (
     <View style={styles.searchbarContainer}>
       <TextInput
-        style={[styles.search, isDark && styles.searchDark]}
+        style={[
+          styles.search,
+          { backgroundColor: theme.searchBackground, color: theme.searchText },
+        ]}
         placeholder={placeholder}
         clearButtonMode="always"
         returnKeyType="done"
         autoCorrect={false}
         value={searchQuery}
         onChangeText={handleSearch}
-        placeholderTextColor={isDark ? '#FFFFFF56' : '#00000056'}
+        placeholderTextColor={theme.searchPlaceholder}
       />
     </View>
   );
