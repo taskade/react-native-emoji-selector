@@ -1,28 +1,23 @@
 declare module 'react-native-emoji-selector' {
   import * as React from 'react';
-  import { ColorValue, ViewStyle } from 'react-native';
-  import { Categories } from 'emoji';
+  import { ColorValue, ViewStyle, StyleProp, FlatList } from 'react-native';
+  // import { Categories } from 'emoji';
 
   export interface EmojiSelectorProps {
-    onEmojiSelected(emoji: string): void;
+    // category?: Categories;
+    columns?: number;
     placeholder?: string;
+    darkMode?: boolean;
     showTabs?: boolean;
+    showSectionTitles?: boolean;
     showSearchBar?: boolean;
     showHistory?: boolean;
-    showSectionTitles?: boolean;
-    category?: Categories;
-    columns?: number;
-    shouldInclude?: (e: any) => boolean;
-    darkMode?: boolean;
-    pickerStyle: ViewStyle;
-    pickerFlatListStyle?: ViewStyle;
-    contentContainerStyle?: ViewStyle;
-    theme?: {
-      primary?: ColorValue;
-      background?: ColorValue;
-      label?: ColorValue;
-      underlay?: ColorValue;
-    };
+    theme?: { [key: string]: ColorValue };
+    pickerStyle?: StyleProp<ViewStyle>;
+    contentContainerStyle?: StyleProp<FlatList>;
+    pickerFlatListStyle?: StyleProp<FlatList>;
+    shouldInclude?: (emojiObj: any) => boolean;
+    onEmojiSelected: (emojiString: string) => void;
   }
 
   const EmojiSelector: React.ComponentType<EmojiSelectorProps>;
