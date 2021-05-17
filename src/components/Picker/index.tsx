@@ -1,12 +1,12 @@
 import { EmojiProps } from 'emoji-datasource';
 import React, { useCallback, useEffect, useState } from 'react';
-import { FlatList, StyleProp, ViewToken } from 'react-native';
+import { FlatList, StyleProp, ViewStyle, ViewToken } from 'react-native';
 
 import { EmojiRow, Header } from './components';
 
 interface Props {
   contentContainerStyle?: StyleProp<FlatList>;
-  pickerFlatListStyle?: StyleProp<FlatList>;
+  pickerFlatListStyle?: StyleProp<ViewStyle>;
   columns?: number;
   numColumns: number;
   colSize: number;

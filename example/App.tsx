@@ -4,7 +4,7 @@ import { Platform, SafeAreaView, StyleSheet, Text, useColorScheme, View } from '
 import EmojiSelector from './src/emoji-selector';
 
 export default function App() {
-  const [emoji, setEmoji] = useState(' ');
+  const [emoji, setEmoji] = useState('');
   const isDarkMode = useColorScheme() === 'dark';
   const theme = {
     background: isDarkMode ? '#333333' : '#FFFFFF',

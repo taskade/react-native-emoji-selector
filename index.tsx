@@ -28,7 +28,7 @@ interface Props {
   theme?: ThemeProps;
   pickerStyle?: StyleProp<ViewStyle>;
   contentContainerStyle?: StyleProp<FlatList>;
-  pickerFlatListStyle?: StyleProp<FlatList>;
+  pickerFlatListStyle?: StyleProp<ViewStyle>;
   shouldInclude?: (emojiObj: EmojiProps) => boolean;
   onEmojiSelected: (emojiString: string) => void;
 }
@@ -52,12 +52,12 @@ const EmojiSelector: React.FC<Props> = (props) => {
     showTabs = true,
     showSearchBar = true,
     showHistory = true,
-    shouldInclude = undefined,
+    contentContainerStyle,
+    pickerStyle,
+    pickerFlatListStyle,
     // showSectionTitles = true,
+    shouldInclude = undefined,
     onEmojiSelected = () => {},
-    contentContainerStyle = undefined,
-    pickerStyle = undefined,
-    pickerFlatListStyle = undefined,
     ...others
   } = props;
 
@@ -105,9 +105,13 @@ const EmojiSelector: React.FC<Props> = (props) => {
 
     const emojiList = sortEmoji(
       emoji.filter((e) => {
-        return e.short_names.some((name) => {
-          return name.includes(searchQuery.toLowerCase());
-        });
+        return shouldInclude
+          ? e.short_names.some((name) => {
+              return name.includes(searchQuery.toLowerCase());
+            }) && shouldInclude(e)
+          : e.short_names.some((name) => {
+              return name.includes(searchQuery.toLowerCase());
+            });
       }),
     );
 
