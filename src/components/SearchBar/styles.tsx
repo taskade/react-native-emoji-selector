@@ -5,13 +5,12 @@ export default StyleSheet.create({
     zIndex: 1,
     marginHorizontal: 8,
     marginBottom: 8,
+    borderRadius: 10,
 
     ...Platform.select({
-      ios: {},
       android: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        borderRadius: 10,
         height: 40,
         borderWidth: 1,
         borderColor: '#00000027',
@@ -21,7 +20,6 @@ export default StyleSheet.create({
 
   search: {
     paddingLeft: 8,
-    color: '#00000087',
     borderRadius: 10,
 
     ...Platform.select({
@@ -34,10 +32,5 @@ export default StyleSheet.create({
         height: '100%',
       },
     }),
-  },
-
-  searchDark: {
-    backgroundColor: '#48484A',
-    color: '#FFFFFF87',
   },
 });
