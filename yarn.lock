@@ -917,13 +917,6 @@
   dependencies:
     "@types/react" "^16"
 
-"@types/react-tracking@^7.0.4":
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/@types/react-tracking/-/react-tracking-7.0.4.tgz#f9ba7a55dfc423ca08f381ffc4edfbc2367cbf4a"
-  integrity sha512-yTyja6UartU25us6WPlfIUU5IIj/U5RPdqfFcakhkiTdb805c95P/GCE7+QCusJNjh9VQj5fxrzBi/kBo25Ckg==
-  dependencies:
-    "@types/react" "*"
-
 "@types/react@*":
   version "17.0.3"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.3.tgz#ba6e215368501ac3826951eef2904574c262cc79"
@@ -2761,11 +2754,6 @@ supports-preserve-symlinks-flag@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz#6eda4bd344a3c94aea376d4cc31bc77311039e09"
   integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
-
-symbol-observable@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
-  integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==
 
 text-table@^0.2.0:
   version "0.2.0"
