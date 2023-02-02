@@ -18,7 +18,6 @@
   "author": "Arron Hunt",
   "license": "MIT",
   "dependencies": {
-    "@taskade/eslint-plugin": "^0.2.0",
     "emoji-datasource": "^6.0.0"
   },
   "peerDependencies": {
@@ -29,6 +28,7 @@
     "@babel/core": "^7.12.10",
     "@babel/eslint-parser": "^7.12.1",
     "@babel/runtime": "^7.12.5",
+    "@taskade/eslint-plugin": "^0.2.0",
     "@types/jest": "^26.0.10",
     "@types/react": "^16.9.48",
     "@types/react-native": "^0.63.10",
