@@ -4,6 +4,10 @@
   "description": "A react native emoji selector",
   "main": "index.tsx",
   "types": "./index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taskade/react-native-emoji-selector.git"
+  },
   "scripts": {
     "prettify": "prettier --write './**/*.js'"
   },
@@ -14,13 +18,12 @@
   "author": "Arron Hunt",
   "license": "MIT",
   "dependencies": {
-    "@react-native-async-storage/async-storage": "^1.13.3",
     "@taskade/eslint-plugin": "^0.2.0",
     "emoji-datasource": "^6.0.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/taskade/react-native-emoji-selector.git"
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": "^1.13.0",
+    "react-native": ">=0.64.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
