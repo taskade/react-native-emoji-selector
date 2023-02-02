@@ -1,7 +1,6 @@
-declare module 'react-native-emoji-selector' {
+declare module '@taskade/react-native-emoji-selector' {
   import * as React from 'react';
   import { ColorValue, ViewStyle, StyleProp, FlatList } from 'react-native';
-  // import { Categories } from 'emoji';
 
   export interface EmojiSelectorProps {
     // category?: Categories;
